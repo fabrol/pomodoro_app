@@ -1,20 +1,43 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
 
 function App() {
+  const pomodoroIntervals = [
+    { minutes: 25, seconds: 0, type: "work" },
+    { minutes: 5, seconds: 0, type: "shortBreak" },
+    { minutes: 25, seconds: 0, type: "work" },
+    { minutes: 5, seconds: 0, type: "shortBreak" },
+    { minutes: 25, seconds: 0, type: "work" },
+    { minutes: 5, seconds: 0, type: "shortBreak" },
+    { minutes: 25, seconds: 0, type: "work" },
+    { minutes: 30, seconds: 0, type: "longBreak" },
+  ];
+
   const [currentPomodoro, setCurrentPomodoro] = useState(0);
 
-  // Example of changing the state, could be based on some timer or user actions
-  const advancePomodoro = () => {
-    setCurrentPomodoro((prev) => (prev + 1) % 4);
-  };
+  const isTestMode = true; // Set this to false in production
+
+  const advancePomodoro = useCallback(() => {
+    setCurrentPomodoro((prev) => (prev + 1) % pomodoroIntervals.length);
+  }, [pomodoroIntervals.length]);
 
   return (
     <div className="App">
       <header className="App-header">
-        <Timer initialCount={60} /> {/* Use the Timer component */}
+        <Timer
+          key={currentPomodoro} // Change key to reset Timer
+          advanceFunc={advancePomodoro}
+          initialMinutes={
+            isTestMode ? 0 : pomodoroIntervals[currentPomodoro].minutes
+          }
+          initialSeconds={
+            isTestMode ? 5 : pomodoroIntervals[currentPomodoro].seconds
+          }
+          type={pomodoroIntervals[currentPomodoro].type}
+        />{" "}
+        {/* Use the Timer component */}
         <div>
           <PomodoroCircles currentPomodoro={currentPomodoro} />
           <button onClick={advancePomodoro}>Next Pomodoro</button>

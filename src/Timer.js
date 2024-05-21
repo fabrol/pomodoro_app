@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 
-function Timer({ initialMinutes = 25 }) {
+function Timer({
+  initialMinutes = 1,
+  initialSeconds = 0,
+  type = "work",
+  advanceFunc,
+}) {
   const [time, setTime] = useState({
     minutes: initialMinutes,
-    seconds: 0,
+    seconds: initialSeconds,
   });
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef(null); // Use useRef to persist interval ID
+  const advancePomodoro = advanceFunc;
 
   useEffect(() => {
+    console.log("isActive", isActive);
     if (isActive) {
       intervalRef.current = setInterval(() => {
         setTime((prevTime) => {
@@ -19,6 +26,7 @@ function Timer({ initialMinutes = 25 }) {
             return { minutes: minutes - 1, seconds: 59 };
           } else {
             clearInterval(intervalRef.current);
+            console.log("Timer ended");
             return { minutes: 0, seconds: 0 };
           }
         });
@@ -29,6 +37,15 @@ function Timer({ initialMinutes = 25 }) {
 
     return () => clearInterval(intervalRef.current); // Cleanup using ref
   }, [isActive]);
+
+  // New useEffect to handle when the timer reaches 0:0
+  useEffect(() => {
+    if (time.minutes === 0 && time.seconds === 0 && isActive) {
+      console.log("advancing pomodoro");
+      advancePomodoro();
+      setIsActive(false);
+    }
+  }, [time, isActive, advancePomodoro]);
 
   const toggle = () => {
     setIsActive(!isActive);
@@ -47,6 +64,7 @@ function Timer({ initialMinutes = 25 }) {
   return (
     <div className="timer">
       <h1>{formatTime()}</h1>
+      <h4>{type}</h4>
       <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
       <button onClick={reset}>Reset</button>
     </div>
