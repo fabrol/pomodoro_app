@@ -3,19 +3,20 @@ import React, { useState, useCallback } from "react";
 import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
 import PomodoroHistory, { Time } from "./PomodoroHistory";
+import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
+
+const pomodoroIntervals = [
+  { minutes: 25, seconds: 0, type: "work" },
+  { minutes: 5, seconds: 0, type: "shortBreak" },
+  { minutes: 25, seconds: 0, type: "work" },
+  { minutes: 5, seconds: 0, type: "shortBreak" },
+  { minutes: 25, seconds: 0, type: "work" },
+  { minutes: 5, seconds: 0, type: "shortBreak" },
+  { minutes: 25, seconds: 0, type: "work" },
+  { minutes: 30, seconds: 0, type: "longBreak" },
+];
 
 function App() {
-  const pomodoroIntervals = [
-    { minutes: 25, seconds: 0, type: "work" },
-    { minutes: 5, seconds: 0, type: "shortBreak" },
-    { minutes: 25, seconds: 0, type: "work" },
-    { minutes: 5, seconds: 0, type: "shortBreak" },
-    { minutes: 25, seconds: 0, type: "work" },
-    { minutes: 5, seconds: 0, type: "shortBreak" },
-    { minutes: 25, seconds: 0, type: "work" },
-    { minutes: 30, seconds: 0, type: "longBreak" },
-  ];
-
   const [currentPomodoro, setCurrentPomodoro] = useState(0);
   const [history] = useState(new PomodoroHistory());
   const [currentTime, setCurrentTime] = useState<Time>({ minutes: 0, seconds: 0 });
@@ -27,7 +28,7 @@ function App() {
     setCurrentPomodoro(newPomodoroIndex);
     history.addEntry(currentPomodoro, currentTime.minutes === 0 && currentTime.seconds === 0, currentTime);
 
-  }, [currentPomodoro, pomodoroIntervals.length, history, currentTime]);
+  }, [currentPomodoro, history, currentTime]);
 
   const resetPomodoro = useCallback(() => {
     setCurrentPomodoro(0);
@@ -56,6 +57,7 @@ function App() {
           <button onClick={advancePomodoro}>Next Pomodoro</button>
           <button onClick={resetPomodoro}>Reset Pomodoro</button>
         </div>
+        <PomodoroHistoryDisplay history={history} />
       </header>
     </div>
   );
