@@ -5,6 +5,8 @@ interface TimerProps {
   initialSeconds?: number;
   type?: string;
   advanceFunc: () => void;
+  setCurrentTime: React.Dispatch<React.SetStateAction<{ minutes: number; seconds: number }>>;
+  currentTime: { minutes: number; seconds: number };
 }
 
 function Timer({
@@ -12,21 +14,23 @@ function Timer({
   initialSeconds = 0,
   type = "work",
   advanceFunc,
+  setCurrentTime,
+  currentTime,
 }: TimerProps) {
 
-  const [time, setTime] = useState({
-    minutes: initialMinutes,
-    seconds: initialSeconds,
-  });
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef<number | null>(null);
   const advancePomodoro = advanceFunc;
 
   useEffect(() => {
+    setCurrentTime({ minutes: initialMinutes, seconds: initialSeconds });
+  }, [initialMinutes, initialSeconds, setCurrentTime]);
+
+  useEffect(() => {
     console.log("isActive", isActive);
     if (isActive) {
       intervalRef.current = window.setInterval(() => {
-        setTime((prevTime) => {
+        setCurrentTime((prevTime) => {
           const { minutes, seconds } = prevTime;
           if (seconds > 0) {
             return { minutes, seconds: seconds - 1 };
@@ -44,28 +48,27 @@ function Timer({
     }
 
     return () => clearInterval(intervalRef.current as number); // Cleanup using ref
-  }, [isActive]);
+  }, [isActive, setCurrentTime]);
 
   // New useEffect to handle when the timer reaches 0:0
   useEffect(() => {
-    if (time.minutes === 0 && time.seconds === 0 && isActive) {
-      console.log("advancing pomodoro");
+    if (currentTime.minutes === 0 && currentTime.seconds === 0 && isActive) {
       setIsActive(false);
       advancePomodoro();
     }
-  }, [time, isActive, advancePomodoro]);
+  }, [currentTime, isActive, advancePomodoro]);
 
   const toggle = () => {
     setIsActive(!isActive);
   };
 
   const reset = () => {
-    setTime({ minutes: initialMinutes, seconds: initialSeconds });
+    setCurrentTime({ minutes: initialMinutes, seconds: initialSeconds });
     setIsActive(false);
   };
 
   const formatTime = () => {
-    const { minutes, seconds } = time;
+    const { minutes, seconds } = currentTime;
     return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
   };
 
