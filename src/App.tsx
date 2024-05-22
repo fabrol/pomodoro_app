@@ -23,6 +23,10 @@ function App() {
     setCurrentPomodoro((prev) => (prev + 1) % pomodoroIntervals.length);
   }, [pomodoroIntervals.length]);
 
+  const resetPomodoro = useCallback(() => {
+    setCurrentPomodoro(0);
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -41,6 +45,7 @@ function App() {
         <div>
           <PomodoroCircles currentPomodoro={Math.floor(currentPomodoro / 2)} />
           <button onClick={advancePomodoro}>Next Pomodoro</button>
+          <button onClick={resetPomodoro}>Reset Pomodoro</button>
         </div>
       </header>
     </div>
