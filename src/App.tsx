@@ -19,21 +19,15 @@ const pomodoroIntervals = [
 function App() {
   const [currentPomodoro, setCurrentPomodoro] = useState(0);
   const [history] = useState(new PomodoroHistory());
-  const [currentTime, setCurrentTime] = useState<Time>({
-    minutes: 0,
-    seconds: 0,
-  });
+  const [currentTime, setCurrentTime] = useState<Time>({ minutes: 0, seconds: 0 });
 
   const isTestMode = true; // Set this to false in production
 
   const advancePomodoro = useCallback(() => {
     const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
     setCurrentPomodoro(newPomodoroIndex);
-    history.addEntry(
-      currentPomodoro,
-      currentTime.minutes === 0 && currentTime.seconds === 0,
-      currentTime
-    );
+    history.addEntry(currentPomodoro, currentTime.minutes === 0 && currentTime.seconds === 0, currentTime);
+
   }, [currentPomodoro, history, currentTime]);
 
   const resetPomodoro = useCallback(() => {
