@@ -42,8 +42,8 @@ function Timer({
   useEffect(() => {
     if (time.minutes === 0 && time.seconds === 0 && isActive) {
       console.log("advancing pomodoro");
-      advancePomodoro();
       setIsActive(false);
+      advancePomodoro();
     }
   }, [time, isActive, advancePomodoro]);
 

@@ -39,7 +39,7 @@ function App() {
         />{" "}
         {/* Use the Timer component */}
         <div>
-          <PomodoroCircles currentPomodoro={currentPomodoro} />
+          <PomodoroCircles currentPomodoro={Math.floor(currentPomodoro / 2)} />
           <button onClick={advancePomodoro}>Next Pomodoro</button>
         </div>
       </header>
