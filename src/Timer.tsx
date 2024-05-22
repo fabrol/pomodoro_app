@@ -1,23 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 
+interface TimerProps {
+  initialMinutes?: number;
+  initialSeconds?: number;
+  type?: string;
+  advanceFunc: () => void;
+}
+
 function Timer({
   initialMinutes = 1,
   initialSeconds = 0,
   type = "work",
   advanceFunc,
-}) {
+}: TimerProps) {
+
   const [time, setTime] = useState({
     minutes: initialMinutes,
     seconds: initialSeconds,
   });
   const [isActive, setIsActive] = useState(false);
-  const intervalRef = useRef(null); // Use useRef to persist interval ID
+  const intervalRef = useRef<number | null>(null);
   const advancePomodoro = advanceFunc;
 
   useEffect(() => {
     console.log("isActive", isActive);
     if (isActive) {
-      intervalRef.current = setInterval(() => {
+      intervalRef.current = window.setInterval(() => {
         setTime((prevTime) => {
           const { minutes, seconds } = prevTime;
           if (seconds > 0) {
@@ -25,17 +33,17 @@ function Timer({
           } else if (minutes > 0) {
             return { minutes: minutes - 1, seconds: 59 };
           } else {
-            clearInterval(intervalRef.current);
+            clearInterval(intervalRef.current as number);
             console.log("Timer ended");
             return { minutes: 0, seconds: 0 };
           }
         });
       }, 1000);
     } else {
-      clearInterval(intervalRef.current);
+      clearInterval(intervalRef.current as number);
     }
 
-    return () => clearInterval(intervalRef.current); // Cleanup using ref
+    return () => clearInterval(intervalRef.current as number); // Cleanup using ref
   }, [isActive]);
 
   // New useEffect to handle when the timer reaches 0:0
@@ -52,7 +60,7 @@ function Timer({
   };
 
   const reset = () => {
-    setTime({ minutes: initialMinutes, seconds: 0 });
+    setTime({ minutes: initialMinutes, seconds: initialSeconds });
     setIsActive(false);
   };
 

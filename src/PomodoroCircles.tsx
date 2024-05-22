@@ -1,6 +1,6 @@
 import React from "react";
 
-function PomodoroCircles({ currentPomodoro }) {
+function PomodoroCircles({ currentPomodoro }: { currentPomodoro: number }) {
   const totalPomodoros = 4;
 
   return (
