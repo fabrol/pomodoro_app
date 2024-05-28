@@ -4,9 +4,10 @@ import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
 import PomodoroHistory, { Time } from "./PomodoroHistory";
 import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
-import { createClient } from "@supabase/supabase-js";
+import { Session, createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { Database } from "./types/database.types";
 
 const pomodoroIntervals = [
   { minutes: 25, seconds: 0, type: "work" },
@@ -19,13 +20,13 @@ const pomodoroIntervals = [
   { minutes: 30, seconds: 0, type: "longBreak" },
 ];
 
-const supabase = createClient(
+const supabase = createClient<Database>(
   "https://iyrfwbftinurdoauzggs.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cmZ3YmZ0aW51cmRvYXV6Z2dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY0MTE3NzYsImV4cCI6MjAzMTk4Nzc3Nn0.xPzv4ZRhsHYsWznLEK-g8bIeJJvcrA0-aYBZl0Obw-s"
 );
 
 function App() {
-  const [session, setSession] = useState(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [currentPomodoro, setCurrentPomodoro] = useState(0);
   const [history] = useState(new PomodoroHistory());
   const [currentTime, setCurrentTime] = useState<Time>({
@@ -36,7 +37,37 @@ function App() {
   const isTestMode = true; // Set this to false in production
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    fetchPomodoroHistory();
+  }, [session]);
+
+  const fetchPomodoroHistory = async () => {
+    try {
+      let user_id = session?.user.id;
+      if (!user_id) {
+        console.log("No user found");
+        return;
+      }
+
+      console.log("Looking for user:", user_id);
+      let { data, error } = await supabase
+        .from("pomo_history")
+        .select("*")
+        .eq("user_id", user_id);
+
+      if (error) {
+        throw error;
+      }
+
+      console.log(data);
+      return data;
+    } catch (error) {
+      console.error("Error fetching Pomodoro history:", error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session as any);
     });
 

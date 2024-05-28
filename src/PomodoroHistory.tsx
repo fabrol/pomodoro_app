@@ -24,11 +24,18 @@ class PomodoroHistory {
       completed,
       timeLeft,
     };
-    console.log(`Timestamp=${entry.timestamp.toLocaleString()}, PomodoroIndex=${entry.pomodoroIndex}, Completed=${entry.completed}, TimeLeft=${entry.timeLeft.minutes}m${entry.timeLeft.seconds}s`);
+    console.log(
+      `Timestamp=${entry.timestamp.toLocaleString()}, PomodoroIndex=${
+        entry.pomodoroIndex
+      }, Completed=${entry.completed}, TimeLeft=${entry.timeLeft.minutes}m${
+        entry.timeLeft.seconds
+      }s`
+    );
     this.entries.push(entry);
   }
 
   getHistory() {
+    console.log(JSON.stringify(this.entries));
     return this.entries;
   }
 }
