@@ -28,43 +28,13 @@ const supabase = createClient<Database>(
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [currentPomodoro, setCurrentPomodoro] = useState(0);
-  const [history] = useState(new PomodoroHistory());
+  const [history, setHistory] = useState(new PomodoroHistory({ supabase }));
   const [currentTime, setCurrentTime] = useState<Time>({
     minutes: 0,
     seconds: 0,
   });
 
   const isTestMode = true; // Set this to false in production
-
-  useEffect(() => {
-    fetchPomodoroHistory();
-  }, [session]);
-
-  const fetchPomodoroHistory = async () => {
-    try {
-      let user_id = session?.user.id;
-      if (!user_id) {
-        console.log("No user found");
-        return;
-      }
-
-      console.log("Looking for user:", user_id);
-      let { data, error } = await supabase
-        .from("pomo_history")
-        .select("*")
-        .eq("user_id", user_id);
-
-      if (error) {
-        throw error;
-      }
-
-      console.log(data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching Pomodoro history:", error);
-      return null;
-    }
-  };
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -79,6 +49,11 @@ function App() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch the pomodoro history when the session changes
+  useEffect(() => {
+    history.fetchPomodoroHistory(null);
+  }, [session, history]);
 
   const advancePomodoro = useCallback(() => {
     const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
