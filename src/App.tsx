@@ -38,6 +38,7 @@ function App() {
 
   const isTestMode = true; // Set this to false in production
 
+  // Get the session on mount
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session as any);
@@ -57,19 +58,28 @@ function App() {
     historyManager.fetchPomodoroHistory("From session useEffect");
   }, [session]);
 
+  // Advance the pomodoro and add an entry to the history
   const advancePomodoro = useCallback(() => {
     const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
     setCurrentPomodoro(newPomodoroIndex);
-    historyManager.addEntry(
-      currentPomodoro,
-      currentTime.minutes === 0 && currentTime.seconds === 0,
-      currentTime
-    );
+    if (!session?.user?.id) {
+      console.log("No user ID found so can't add pomo");
+      return;
+    }
+
+    historyManager.addEntry({
+      pomodoroIndex: currentPomodoro,
+      completed: currentTime.minutes === 0 && currentTime.seconds === 0,
+      timeLeft: currentTime,
+      userId: session?.user?.id,
+      pomoCat: pomodoroIntervals[currentPomodoro].type,
+      pomoDurationMin: pomodoroIntervals[currentPomodoro].minutes,
+    });
   }, [currentPomodoro, currentTime]);
 
   const resetPomodoro = useCallback(() => {
     setCurrentPomodoro(0);
-    historyManager.addEntry(currentPomodoro, false, currentTime);
+    //historyManager.addEntry(currentPomodoro, false, currentTime);
   }, [currentPomodoro, historyManager, currentTime]);
 
   if (!session) {

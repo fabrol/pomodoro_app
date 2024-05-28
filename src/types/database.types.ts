@@ -35,6 +35,50 @@ export type Database = {
           },
         ]
       }
+      pomos: {
+        Row: {
+          completed: boolean
+          ended_at: string
+          id: number
+          pomo_cat: string
+          pomo_duration_min: number
+          pomo_index: number
+          time_left_minutes: number | null
+          time_left_seconds: number | null
+          user_id: string
+        }
+        Insert: {
+          completed: boolean
+          ended_at: string
+          id?: number
+          pomo_cat: string
+          pomo_duration_min: number
+          pomo_index: number
+          time_left_minutes?: number | null
+          time_left_seconds?: number | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          ended_at?: string
+          id?: number
+          pomo_cat?: string
+          pomo_duration_min?: number
+          pomo_index?: number
+          time_left_minutes?: number | null
+          time_left_seconds?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pomos_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

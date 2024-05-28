@@ -14,9 +14,9 @@ const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
           <li key={index} style={{ fontSize: "small" }}>
             {" "}
             {/* Apply smaller font size here */}
-            Timestamp: {entry.timestamp.toLocaleString()}, Pomodoro Index:{" "}
-            {entry.pomodoroIndex}, Completed: {entry.completed ? "Yes" : "No"},
-            Time Left: {entry.timeLeft.minutes}m {entry.timeLeft.seconds}s
+            Timestamp: {entry.ended_at.toLocaleString()}, Pomodoro Index:{" "}
+            {entry.pomo_index}, Completed: {entry.completed ? "Yes" : "No"},
+            Time Left: {entry.time_left_minutes}m {entry.time_left_seconds}s
           </li>
         ))}
       </ul>
