@@ -1,18 +1,16 @@
 import React from "react";
-import PomodoroHistory from "./PomodoroHistory";
+import PomodoroHistory, { PomodoroEntry } from "./PomodoroHistory";
 
 type Props = {
-  history: PomodoroHistory;
+  history: PomodoroEntry[];
 };
 
 const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
-  const entries = history.getHistory();
-
   return (
     <div>
       <h3>Pomodoro History</h3>
       <ul>
-        {entries.map((entry, index) => (
+        {history.map((entry, index) => (
           <li key={index} style={{ fontSize: "small" }}>
             {" "}
             {/* Apply smaller font size here */}

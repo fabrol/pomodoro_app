@@ -2,7 +2,7 @@ import "./App.css";
 import React, { useState, useCallback, useEffect } from "react";
 import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
-import PomodoroHistory, { Time } from "./PomodoroHistory";
+import PomodoroHistory, { PomodoroEntry, Time } from "./PomodoroHistory";
 import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
 import { Session, createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
@@ -28,7 +28,9 @@ const supabase = createClient<Database>(
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [currentPomodoro, setCurrentPomodoro] = useState(0);
-  const [history, setHistory] = useState(new PomodoroHistory({ supabase }));
+  const [history, setHistory] = useState<PomodoroEntry[]>([]);
+  const historyManager = new PomodoroHistory({ supabase, history, setHistory });
+
   const [currentTime, setCurrentTime] = useState<Time>({
     minutes: 0,
     seconds: 0,
@@ -52,23 +54,23 @@ function App() {
 
   // Fetch the pomodoro history when the session changes
   useEffect(() => {
-    history.fetchPomodoroHistory(null);
-  }, [session, history]);
+    historyManager.fetchPomodoroHistory("From session useEffect");
+  }, [session]);
 
   const advancePomodoro = useCallback(() => {
     const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
     setCurrentPomodoro(newPomodoroIndex);
-    history.addEntry(
+    historyManager.addEntry(
       currentPomodoro,
       currentTime.minutes === 0 && currentTime.seconds === 0,
       currentTime
     );
-  }, [currentPomodoro, history, currentTime]);
+  }, [currentPomodoro, currentTime]);
 
   const resetPomodoro = useCallback(() => {
     setCurrentPomodoro(0);
-    history.addEntry(currentPomodoro, false, currentTime);
-  }, [currentPomodoro, history, currentTime]);
+    historyManager.addEntry(currentPomodoro, false, currentTime);
+  }, [currentPomodoro, historyManager, currentTime]);
 
   if (!session) {
     return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;

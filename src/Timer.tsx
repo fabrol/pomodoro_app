@@ -5,7 +5,9 @@ interface TimerProps {
   initialSeconds?: number;
   type?: string;
   advanceFunc: () => void;
-  setCurrentTime: React.Dispatch<React.SetStateAction<{ minutes: number; seconds: number }>>;
+  setCurrentTime: React.Dispatch<
+    React.SetStateAction<{ minutes: number; seconds: number }>
+  >;
   currentTime: { minutes: number; seconds: number };
 }
 
@@ -17,7 +19,6 @@ function Timer({
   setCurrentTime,
   currentTime,
 }: TimerProps) {
-
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef<number | null>(null);
   const advancePomodoro = advanceFunc;

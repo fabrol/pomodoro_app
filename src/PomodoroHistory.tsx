@@ -27,17 +27,21 @@ function parseJsonToPomodoroEntry(jsonData: any): PomodoroEntry {
 
 interface PomodoroHistoryProps {
   supabase: SupabaseClient<Database>;
+  history: PomodoroEntry[];
+  setHistory: (history: PomodoroEntry[]) => void;
 }
 
 class PomodoroHistory {
   private entries: PomodoroEntry[];
   private history: PomodoroEntry[];
+  private setHistory: (history: PomodoroEntry[]) => void;
   private supabase: SupabaseClient<Database>;
 
-  constructor({ supabase }: PomodoroHistoryProps) {
+  constructor(props: PomodoroHistoryProps) {
     this.entries = [];
-    this.history = [];
-    this.supabase = supabase;
+    this.history = props.history;
+    this.setHistory = props.setHistory;
+    this.supabase = props.supabase;
 
     this.supabase
       .channel("pomo_history")
@@ -77,18 +81,16 @@ class PomodoroHistory {
       }
 
       if (Array.isArray(data[0].history)) {
-        this.history = data[0].history.map(parseJsonToPomodoroEntry);
-        console.log("Setting history to:", this.history);
+        this.setHistory(data[0].history.map(parseJsonToPomodoroEntry));
+        console.log("Setting history to:", data[0].history);
       } else {
         console.error(
           "Expected history to be an array but received:",
           typeof data[0].history
         );
       }
-      return data;
     } catch (error) {
       console.error("Error fetching Pomodoro history:", error);
-      return null;
     }
   };
 
@@ -111,9 +113,10 @@ class PomodoroHistory {
 
   getHistory() {
     //    console.log(JSON.stringify(this.entries));
-    console.log(this.history);
+    console.log("getting history:", this.history);
     return this.history;
   }
 }
 
 export default PomodoroHistory;
+export type { PomodoroEntry };
