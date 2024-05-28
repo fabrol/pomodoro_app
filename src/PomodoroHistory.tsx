@@ -71,7 +71,7 @@ class PomodoroHistory {
 
       console.log("Looking for user:", user_id);
       let { data, error } = await this.supabase
-        .from("pomo_history")
+        .from("pomos")
         .select("*")
         .eq("user_id", user_id);
 
@@ -84,13 +84,13 @@ class PomodoroHistory {
         return;
       }
 
-      if (Array.isArray(data[0].history)) {
-        //this.setHistory(data[0].history.map(parseJsonToPomodoroEntry));
-        console.log("Setting history to:", data[0].history);
+      if (Array.isArray(data)) {
+        this.setHistory(data);
+        console.log("Setting history to:", data);
       } else {
         console.error(
           "Expected history to be an array but received:",
-          typeof data[0].history
+          typeof data
         );
       }
     } catch (error) {
