@@ -6,28 +6,6 @@ export type Time = {
   seconds: number;
 };
 
-/*
-type PomodoroEntry = {
-  timestamp: Date;
-  pomodoroIndex: number;
-  completed: boolean;
-  timeLeft: Time;
-};
-
-
-function parseJsonToPomodoroEntry(jsonData: any): PomodoroEntry {
-  return {
-    timestamp: new Date(jsonData.timestamp),
-    pomodoroIndex: jsonData.pomodoroIndex,
-    completed: jsonData.completed,
-    timeLeft: {
-      minutes: jsonData.timeLeft.minutes,
-      seconds: jsonData.timeLeft.seconds,
-    },
-  };
-}
-*/
-
 type PomodoroEntry = Tables<"pomos">;
 interface PomodoroHistoryProps {
   supabase: SupabaseClient<Database>;
@@ -36,13 +14,11 @@ interface PomodoroHistoryProps {
 }
 
 class PomodoroHistory {
-  private entries: PomodoroEntry[];
   private history: PomodoroEntry[];
   private setHistory: (history: PomodoroEntry[]) => void;
   private supabase: SupabaseClient<Database>;
 
   constructor(props: PomodoroHistoryProps) {
-    this.entries = [];
     this.history = props.history;
     this.setHistory = props.setHistory;
     this.supabase = props.supabase;
@@ -125,12 +101,6 @@ class PomodoroHistory {
     if (error) {
       console.error("Error inserting pomo into history:", error);
     }
-  }
-
-  getHistory() {
-    //    console.log(JSON.stringify(this.entries));
-    console.log("getting history:", this.history);
-    return this.history;
   }
 }
 
