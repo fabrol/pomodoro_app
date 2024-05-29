@@ -76,7 +76,6 @@ class PomodoroHistory {
 
   async addEntry(options: {
     pomodoroIndex: number;
-    completed: boolean;
     timeLeft: Time;
     userId: string;
     pomoCat: string;
@@ -85,7 +84,6 @@ class PomodoroHistory {
     const entry: TablesInsert<"pomos"> = {
       ended_at: new Date().toISOString(),
       pomo_index: options.pomodoroIndex,
-      completed: options.completed,
       time_left_minutes: options.timeLeft.minutes,
       time_left_seconds: options.timeLeft.seconds,
       pomo_cat: options.pomoCat,
@@ -93,7 +91,7 @@ class PomodoroHistory {
       user_id: options.userId,
     };
     console.log(
-      `Timestamp=${entry.ended_at}, PomodoroIndex=${entry.pomo_index}, Completed=${entry.completed}, TimeLeft=${entry.time_left_minutes}m${entry.time_left_seconds}s`
+      `Timestamp=${entry.ended_at}, PomodoroIndex=${entry.pomo_index}, TimeLeft=${entry.time_left_minutes}m${entry.time_left_seconds}s`
     );
 
     // Insert this record into supabase table pomos

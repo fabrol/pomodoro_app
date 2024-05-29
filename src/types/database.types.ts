@@ -37,7 +37,6 @@ export type Database = {
       }
       pomos: {
         Row: {
-          completed: boolean
           ended_at: string
           id: number
           pomo_cat: string
@@ -48,7 +47,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          completed: boolean
           ended_at: string
           id?: number
           pomo_cat: string
@@ -59,7 +57,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          completed?: boolean
           ended_at?: string
           id?: number
           pomo_cat?: string

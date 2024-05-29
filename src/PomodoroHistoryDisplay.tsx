@@ -14,7 +14,6 @@ const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
           <tr>
             <th>Timestamp</th>
             <th>Pomodoro Index</th>
-            <th>Completed</th>
             <th>Time Left</th>
             <th>Pomodoro Category</th>
             <th>Pomodoro Duration</th>
@@ -26,7 +25,6 @@ const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
             <tr key={index}>
               <td>{entry.ended_at.toLocaleString()}</td>
               <td>{entry.pomo_index}</td>
-              <td>{entry.completed ? "Yes" : "No"}</td>
               <td>
                 {entry.time_left_minutes}m {entry.time_left_seconds}s
               </td>

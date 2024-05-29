@@ -60,7 +60,6 @@ function App() {
 
     historyManager.addEntry({
       pomodoroIndex: currentPomodoro,
-      completed: currentTime.minutes === 0 && currentTime.seconds === 0,
       timeLeft: currentTime,
       userId: session?.user?.id,
       pomoCat: pomodoroIntervals[currentPomodoro].type,
