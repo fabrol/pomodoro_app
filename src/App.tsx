@@ -8,17 +8,7 @@ import { Session, createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Database } from "./types/database.types";
-
-const pomodoroIntervals = [
-  { minutes: 25, seconds: 0, type: "work" },
-  { minutes: 5, seconds: 0, type: "shortBreak" },
-  { minutes: 25, seconds: 0, type: "work" },
-  { minutes: 5, seconds: 0, type: "shortBreak" },
-  { minutes: 25, seconds: 0, type: "work" },
-  { minutes: 5, seconds: 0, type: "shortBreak" },
-  { minutes: 25, seconds: 0, type: "work" },
-  { minutes: 30, seconds: 0, type: "longBreak" },
-];
+import { pomodoroIntervals, totalPomodoros } from "./constants";
 
 const supabase = createClient<Database>(
   "https://iyrfwbftinurdoauzggs.supabase.co",
@@ -35,6 +25,7 @@ function App() {
     minutes: 0,
     seconds: 0,
   });
+  const [isActive, setIsActive] = useState(false);
 
   const isTestMode = true; // Set this to false in production
 
@@ -100,11 +91,14 @@ function App() {
             type={pomodoroIntervals[currentPomodoro].type}
             setCurrentTime={setCurrentTime}
             currentTime={currentTime}
+            isActive={isActive}
+            setIsActive={setIsActive}
           />{" "}
           {/* Use the Timer component */}
           <div>
             <PomodoroCircles
-              currentPomodoro={Math.floor(currentPomodoro / 2)}
+              currentPomodoro={currentPomodoro}
+              isActive={isActive}
             />
             <button onClick={advancePomodoro}>Next Pomodoro</button>
             <button onClick={resetPomodoro}>Reset Pomodoro</button>

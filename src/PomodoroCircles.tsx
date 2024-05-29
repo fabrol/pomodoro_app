@@ -1,18 +1,36 @@
 import React from "react";
+import { totalPomodoros, pomodoroIntervals } from "./constants";
 
-function PomodoroCircles({ currentPomodoro }: { currentPomodoro: number }) {
-  const totalPomodoros = 4;
-
+function PomodoroCircles({
+  currentPomodoro,
+  isActive,
+}: {
+  currentPomodoro: number;
+  isActive: boolean;
+}) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-around" }}>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
       {Array.from({ length: totalPomodoros }, (_, index) => (
         <div
           key={index}
           style={{
-            width: "20px",
-            height: "20px",
-            borderRadius: "50%",
-            backgroundColor: index <= currentPomodoro ? "red" : "grey",
+            width: pomodoroIntervals[index].type === "work" ? "20px" : "15px",
+            height: pomodoroIntervals[index].type === "work" ? "20px" : "15px",
+            borderRadius:
+              index === currentPomodoro && isActive ? "50%, 50%, 0, 0" : "50%",
+            backgroundColor:
+              index <= currentPomodoro
+                ? index == currentPomodoro
+                  ? "grey"
+                  : "green"
+                : "grey",
+            borderColor: index == currentPomodoro ? "green" : "transparent",
+            borderWidth: index === currentPomodoro ? "1px" : "0px",
+            borderStyle: "solid",
+            backgroundImage:
+              index === currentPomodoro && isActive
+                ? "linear-gradient(90deg, #d1d1d1 50%, transparent 50%)"
+                : "",
           }}
         />
       ))}

@@ -9,6 +9,8 @@ interface TimerProps {
     React.SetStateAction<{ minutes: number; seconds: number }>
   >;
   currentTime: { minutes: number; seconds: number };
+  isActive: boolean;
+  setIsActive: (value: boolean) => void;
 }
 
 function Timer({
@@ -18,8 +20,9 @@ function Timer({
   advanceFunc,
   setCurrentTime,
   currentTime,
+  isActive,
+  setIsActive,
 }: TimerProps) {
-  const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef<number | null>(null);
   const advancePomodoro = advanceFunc;
 
