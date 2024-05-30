@@ -1,14 +1,15 @@
 import "./App.css";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
-import PomodoroHistory, { PomodoroEntry, Time } from "./PomodoroHistory";
+import PomodoroHistory, { PomodoroEntry } from "./PomodoroHistory";
 import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
 import { Session, createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Database } from "./types/database.types";
-import { pomodoroIntervals, totalPomodoros } from "./constants";
+import { pomodoroIntervals, Time } from "./constants";
+import PomodoroStatsDisplay from "./PomodoroStatsDisplay";
 
 const supabase = createClient<Database>(
   "https://iyrfwbftinurdoauzggs.supabase.co",
@@ -26,8 +27,6 @@ function App() {
     seconds: 0,
   });
   const [isActive, setIsActive] = useState(false);
-
-  const isTestMode = true; // Set this to false in production
 
   // Get the session on mount
   useEffect(() => {
@@ -52,6 +51,7 @@ function App() {
   // Advance the pomodoro and add an entry to the history
   const advancePomodoro = useCallback(() => {
     const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
+    setIsActive(false);
     setCurrentPomodoro(newPomodoroIndex);
     if (!session?.user?.id) {
       console.log("No user ID found so can't add pomo");
@@ -64,6 +64,7 @@ function App() {
       userId: session?.user?.id,
       pomoCat: pomodoroIntervals[currentPomodoro].type,
       pomoDurationMin: pomodoroIntervals[currentPomodoro].minutes,
+      pomoDurationSec: pomodoroIntervals[currentPomodoro].seconds,
     });
   }, [currentPomodoro, currentTime]);
 
@@ -71,6 +72,14 @@ function App() {
     setCurrentPomodoro(0);
     //historyManager.addEntry(currentPomodoro, false, currentTime);
   }, [currentPomodoro, historyManager, currentTime]);
+
+  const initialTime = useMemo(
+    () => ({
+      minutes: pomodoroIntervals[currentPomodoro].minutes,
+      seconds: pomodoroIntervals[currentPomodoro].seconds,
+    }),
+    [currentPomodoro]
+  );
 
   if (!session) {
     return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
@@ -81,12 +90,7 @@ function App() {
           <Timer
             key={currentPomodoro} // Change key to reset Timer
             advanceFunc={advancePomodoro}
-            initialMinutes={
-              isTestMode ? 0 : pomodoroIntervals[currentPomodoro].minutes
-            }
-            initialSeconds={
-              isTestMode ? 5 : pomodoroIntervals[currentPomodoro].seconds
-            }
+            initialTime={initialTime}
             type={pomodoroIntervals[currentPomodoro].type}
             setCurrentTime={setCurrentTime}
             currentTime={currentTime}
@@ -102,6 +106,7 @@ function App() {
             <button onClick={advancePomodoro}>Next Pomodoro</button>
             <button onClick={resetPomodoro}>Reset Pomodoro</button>
           </div>
+          <PomodoroStatsDisplay history={history} />
           <PomodoroHistoryDisplay history={history} />
         </header>
       </div>

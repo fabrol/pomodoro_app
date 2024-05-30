@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Time } from "./constants";
 
 interface TimerProps {
-  initialMinutes?: number;
-  initialSeconds?: number;
+  initialTime?: Time;
   type?: string;
   advanceFunc: () => void;
   setCurrentTime: React.Dispatch<
@@ -14,8 +14,7 @@ interface TimerProps {
 }
 
 function Timer({
-  initialMinutes = 1,
-  initialSeconds = 0,
+  initialTime = { minutes: 0, seconds: 4 },
   type = "work",
   advanceFunc,
   setCurrentTime,
@@ -27,8 +26,8 @@ function Timer({
   const advancePomodoro = advanceFunc;
 
   useEffect(() => {
-    setCurrentTime({ minutes: initialMinutes, seconds: initialSeconds });
-  }, [initialMinutes, initialSeconds, setCurrentTime]);
+    setCurrentTime(initialTime);
+  }, [initialTime]);
 
   useEffect(() => {
     console.log("isActive", isActive);
@@ -67,7 +66,7 @@ function Timer({
   };
 
   const reset = () => {
-    setCurrentTime({ minutes: initialMinutes, seconds: initialSeconds });
+    setCurrentTime(initialTime);
     setIsActive(false);
   };
 

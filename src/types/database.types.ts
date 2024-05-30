@@ -41,6 +41,7 @@ export type Database = {
           id: number
           pomo_cat: string
           pomo_duration_min: number
+          pomo_duration_seconds: number | null
           pomo_index: number
           time_left_minutes: number | null
           time_left_seconds: number | null
@@ -51,6 +52,7 @@ export type Database = {
           id?: number
           pomo_cat: string
           pomo_duration_min: number
+          pomo_duration_seconds?: number | null
           pomo_index: number
           time_left_minutes?: number | null
           time_left_seconds?: number | null
@@ -61,6 +63,7 @@ export type Database = {
           id?: number
           pomo_cat?: string
           pomo_duration_min?: number
+          pomo_duration_seconds?: number | null
           pomo_index?: number
           time_left_minutes?: number | null
           time_left_seconds?: number | null

@@ -1,10 +1,6 @@
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { Database, Tables, Enums, TablesInsert } from "./types/database.types";
-
-export type Time = {
-  minutes: number;
-  seconds: number;
-};
+import { Time } from "./constants";
 
 type PomodoroEntry = Tables<"pomos">;
 interface PomodoroHistoryProps {
@@ -80,6 +76,7 @@ class PomodoroHistory {
     userId: string;
     pomoCat: string;
     pomoDurationMin: number;
+    pomoDurationSec: number; // Add this line
   }) {
     const entry: TablesInsert<"pomos"> = {
       ended_at: new Date().toISOString(),
@@ -88,6 +85,7 @@ class PomodoroHistory {
       time_left_seconds: options.timeLeft.seconds,
       pomo_cat: options.pomoCat,
       pomo_duration_min: options.pomoDurationMin,
+      pomo_duration_seconds: options.pomoDurationSec,
       user_id: options.userId,
     };
     console.log(

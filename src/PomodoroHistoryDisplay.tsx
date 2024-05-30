@@ -16,7 +16,7 @@ const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
             <th>Pomodoro Index</th>
             <th>Time Left</th>
             <th>Pomodoro Category</th>
-            <th>Pomodoro Duration</th>
+            <th>Pomodoro Duration (min:sec)</th>
             <th>User ID</th>
           </tr>
         </thead>
@@ -29,7 +29,9 @@ const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
                 {entry.time_left_minutes}m {entry.time_left_seconds}s
               </td>
               <td>{entry.pomo_cat}</td>
-              <td>{entry.pomo_duration_min} minutes</td>
+              <td>
+                {entry.pomo_duration_min}m:{entry.pomo_duration_seconds}s
+              </td>
               <td>{entry.user_id}</td>
             </tr>
           ))}
