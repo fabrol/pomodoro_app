@@ -1,10 +1,10 @@
 import { PomodoroEntry } from "./PomodoroHistory";
+import { Time } from "./constants";
 
 export interface PomodoroStats {
-  totalWorkTimeMinutes: number;
-  totalWorkTimeSeconds: number;
-  totalBreakTimeMinutes: number;
-  totalBreakTimeSeconds: number;
+  totalWorkTime: Time;
+  actualWorkTime: Time;
+  totalBreakTime: Time;
   workSessions: number;
   breakSessions: number;
   totalCycles: number;
@@ -17,10 +17,9 @@ export function calculatePomodoroStats(
   endDate: Date
 ): PomodoroStats {
   let stats: PomodoroStats = {
-    totalWorkTimeMinutes: 0,
-    totalWorkTimeSeconds: 0,
-    totalBreakTimeMinutes: 0,
-    totalBreakTimeSeconds: 0,
+    totalWorkTime: { minutes: 0, seconds: 0 },
+    actualWorkTime: { minutes: 0, seconds: 0 },
+    totalBreakTime: { minutes: 0, seconds: 0 },
     workSessions: 0,
     breakSessions: 0,
     totalCycles: 0,
@@ -42,7 +41,8 @@ export function calculatePomodoroStats(
           totalWorkTimeInSeconds - timeLeftInSeconds;
 
         // Update total work time in seconds
-        stats.totalWorkTimeSeconds += actualWorkTimeInSeconds;
+        stats.totalWorkTime.seconds += totalWorkTimeInSeconds;
+        stats.actualWorkTime.seconds += actualWorkTimeInSeconds;
 
         // Increment work sessions
         stats.workSessions++;
@@ -63,7 +63,7 @@ export function calculatePomodoroStats(
           totalBreakTimeInSeconds - breakTimeLeftInSeconds;
 
         // Update total break time in seconds
-        stats.totalBreakTimeSeconds += actualBreakTimeInSeconds;
+        stats.totalBreakTime.seconds += actualBreakTimeInSeconds;
 
         // Increment break sessions
         stats.breakSessions++;
@@ -72,10 +72,12 @@ export function calculatePomodoroStats(
   });
 
   // Normalize seconds to minutes at the end of processing all entries
-  stats.totalWorkTimeMinutes += Math.floor(stats.totalWorkTimeSeconds / 60);
-  stats.totalWorkTimeSeconds %= 60;
-  stats.totalBreakTimeMinutes += Math.floor(stats.totalBreakTimeSeconds / 60);
-  stats.totalBreakTimeSeconds %= 60;
+  stats.totalWorkTime.minutes += Math.floor(stats.totalWorkTime.seconds / 60);
+  stats.totalWorkTime.seconds %= 60;
+  stats.totalBreakTime.minutes += Math.floor(stats.totalBreakTime.seconds / 60);
+  stats.totalBreakTime.seconds %= 60;
+  stats.actualWorkTime.minutes += Math.floor(stats.actualWorkTime.seconds / 60);
+  stats.actualWorkTime.seconds %= 60;
 
   stats.totalCycles = Math.floor(stats.workSessions / 4);
 

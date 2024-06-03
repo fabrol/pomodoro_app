@@ -113,12 +113,16 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
       {stats && (
         <ul>
           <li>
-            Total Work Time: {stats.totalWorkTimeMinutes} minutes{" "}
-            {stats.totalWorkTimeSeconds} seconds
+            Total Work Time: {stats.totalWorkTime.minutes} minutes{" "}
+            {stats.totalWorkTime.seconds} seconds
           </li>
           <li>
-            Total Break Time: {stats.totalBreakTimeMinutes} minutes{" "}
-            {stats.totalBreakTimeSeconds} seconds
+            Actual Work Time: {stats.actualWorkTime.minutes} minutes{" "}
+            {stats.actualWorkTime.seconds} seconds
+          </li>
+          <li>
+            Total Break Time: {stats.totalBreakTime.minutes} minutes{" "}
+            {stats.totalBreakTime.seconds} seconds
           </li>
           <li>Work Sessions: {stats.workSessions}</li>
           <li>Break Sessions: {stats.breakSessions}</li>
