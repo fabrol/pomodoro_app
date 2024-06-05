@@ -19,6 +19,7 @@ class PomodoroHistory {
     this.setHistory = props.setHistory;
     this.supabase = props.supabase;
 
+    // Need to make this scoped to just the user
     this.supabase
       .channel("pomo_history")
       .on(

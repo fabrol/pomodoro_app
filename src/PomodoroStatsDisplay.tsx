@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PomodoroStats, calculatePomodoroStats } from "./HistoryAnalyzer";
 import { PomodoroEntry } from "./PomodoroHistory";
+import PomodoroRollupGraph from "./PomodoroRollupGraph";
 
 type Props = {
   history: PomodoroEntry[];
@@ -12,6 +13,9 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
   const [stats, setStats] = useState<PomodoroStats | null>(null);
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [rollupArray, setRollupArray] = useState<
+    Array<{ name: string; count: number }>
+  >([]);
 
   useEffect(() => {
     const start = new Date(currentDate);
@@ -47,8 +51,18 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
     setStartDate(start);
     setEndDate(end);
 
-    const calculatedStats = calculatePomodoroStats(history, start, end);
-    setStats(calculatedStats);
+    const { stats, rollups } = calculatePomodoroStats(
+      history,
+      start,
+      end,
+      period
+    );
+    setStats(stats);
+    const newRollupArray = Array.from(rollups, ([name, count]) => ({
+      name,
+      count,
+    }));
+    setRollupArray(newRollupArray);
   }, [period, currentDate, history]);
 
   const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -130,6 +144,7 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
           <li>Work Interruptions: {stats.workInterruptions}</li>
         </ul>
       )}
+      <PomodoroRollupGraph data={rollupArray} />
     </div>
   );
 };
