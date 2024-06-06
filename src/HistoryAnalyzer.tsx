@@ -57,6 +57,34 @@ function initializeRollups(period: string): Map<string, number> {
   return rollups;
 }
 
+function formatRollupKeys(
+  rollups: Map<string, number>,
+  period: string
+): Map<string, number> {
+  const formattedRollups = new Map<string, number>();
+  rollups.forEach((count, key) => {
+    let formattedKey = key;
+    switch (period) {
+      case "day":
+        formattedKey = `${key}`; // Format as hour of the day
+        break;
+      case "week":
+        //const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        //formattedKey = weekdays[parseInt(key)]; // Convert day index to weekday name
+        formattedKey = `${key}`;
+        break;
+      case "month":
+        formattedKey = `${key}`;
+        break;
+      case "year":
+        formattedKey = `${key}`;
+        break;
+    }
+    formattedRollups.set(formattedKey, count);
+  });
+  return formattedRollups;
+}
+
 export function calculatePomodoroStats(
   history: PomodoroEntry[],
   startDate: Date,
@@ -110,5 +138,7 @@ export function calculatePomodoroStats(
 
   stats.totalCycles = Math.floor(stats.workSessions / 4);
 
-  return { stats, rollups };
+  const formattedRollups = formatRollupKeys(rollups, period);
+
+  return { stats, rollups: formattedRollups };
 }

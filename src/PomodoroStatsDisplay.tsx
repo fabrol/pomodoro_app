@@ -144,7 +144,7 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
           <li>Work Interruptions: {stats.workInterruptions}</li>
         </ul>
       )}
-      <PomodoroRollupGraph data={rollupArray} />
+      <PomodoroRollupGraph data={rollupArray} period={period} />
     </div>
   );
 };
