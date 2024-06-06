@@ -64,12 +64,35 @@ function customTickFormatter(
   }
 }
 
+// Hooked in if i want to do something with it in the future.
+const CustomTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    //console.log(payload);
+  }
+
+  return null;
+};
+
 const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
-  const chartKey = `chart-${period}`;
+  // Custom label component that only shows labels for non-zero values
+  const renderCustomBarLabel = ({ x, y, width, height, value }) => {
+    return (
+      <text
+        x={x + width / 2}
+        y={y}
+        fill="black"
+        textAnchor="middle"
+        dy={25}
+        fontSize={Math.max(20, width / (value.toString().length + 1))}
+      >
+        {value > 0 ? value : ""}
+      </text>
+    );
+  };
 
   return (
     <BarChart
-      key={chartKey}
+      key={`chart-${period}`}
       width={500}
       height={300}
       data={data}
@@ -88,21 +111,21 @@ const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
         tickLine={false}
         axisLine={false}
       />
-      <Tooltip />
-      {/* Single Bar with conditional Cell coloring */}
-      <Bar
-        dataKey="count"
-        fill="#8884d8"
-        background={{ fill: "#ccc" }}
-        animationDuration={500}
-      >
-        {data.map((entry, index) => (
-          <Cell
-            key={`cell-${index}`}
-            fill={entry.count > 0 ? "#8884d8" : "#ccc"} // Only color the cell if there is data
-          />
-        ))}
-      </Bar>
+      <Tooltip
+        content={<CustomTooltip active={undefined} payload={undefined} />}
+        cursor={false}
+      />
+      {
+        <Bar
+          dataKey="count"
+          fill="#8884d8"
+          background={{ fill: "#ccc", radius: 10, fillOpacity: 0.2 }}
+          radius={10}
+          animationBegin={20}
+          animationEasing="ease-in"
+          label={(props) => renderCustomBarLabel(props)}
+        ></Bar>
+      }
     </BarChart>
   );
 };
