@@ -59,7 +59,6 @@ function App() {
 
   return (
     <div className="App">
-      <NavBar />
       <header className="App-header">
         <Timer
           key={currentPomodoro} // Change key to reset Timer

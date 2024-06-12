@@ -1,0 +1,40 @@
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  background:transparent;
+  padding: 10px 0;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000; /* Ensures navbar stays on top of other content */
+}
+
+.navbar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.navbar li {
+  border: none; /* Ensures no borders */
+}
+
+.navbar a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit; /* Inherits the color from parent */
+  text-decoration: none;
+  transition: color 0.3s; /* Smooth transition for hover effects */
+  position: relative; /* Needed for positioning the pseudo-element */
+  overflow: hidden; /* Ensures the pseudo-element does not extend outside the link area */
+}
+
+.navbar a:hover {
+  color: white;
+}
