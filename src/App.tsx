@@ -1,52 +1,28 @@
 import "./App.css";
 import React, { useState, useCallback, useEffect, useMemo } from "react";
+import NavBar from "./Navbar";
 import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
 import PomodoroHistory, { PomodoroEntry } from "./PomodoroHistory";
 import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
+import PomodoroStatsDisplay from "./PomodoroStatsDisplay";
 import { Session, createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { Database } from "./types/database.types";
 import { pomodoroIntervals, Time } from "./constants";
-import PomodoroStatsDisplay from "./PomodoroStatsDisplay";
-
-const supabase = createClient<Database>(
-  "https://iyrfwbftinurdoauzggs.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5cmZ3YmZ0aW51cmRvYXV6Z2dzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTY0MTE3NzYsImV4cCI6MjAzMTk4Nzc3Nn0.xPzv4ZRhsHYsWznLEK-g8bIeJJvcrA0-aYBZl0Obw-s"
-);
+import { useContext } from "react";
+import { SessionContext } from "./StateProvider"; // Import SessionContext
 
 function App() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [currentPomodoro, setCurrentPomodoro] = useState(0);
-  const [history, setHistory] = useState<PomodoroEntry[]>([]);
-  const historyManager = new PomodoroHistory({ supabase, history, setHistory });
+  const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
 
+  const [currentPomodoro, setCurrentPomodoro] = useState(0);
   const [currentTime, setCurrentTime] = useState<Time>({
     minutes: 0,
     seconds: 0,
   });
   const [isActive, setIsActive] = useState(false);
-
-  // Get the session on mount
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session as any);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session as any);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Fetch the pomodoro history when the session changes
-  useEffect(() => {
-    historyManager.fetchPomodoroHistory("From session useEffect");
-  }, [session]);
 
   // Advance the pomodoro and add an entry to the history
   const advancePomodoro = useCallback(() => {
@@ -81,37 +57,32 @@ function App() {
     [currentPomodoro]
   );
 
-  if (!session) {
-    return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
-  } else {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <Timer
-            key={currentPomodoro} // Change key to reset Timer
-            advanceFunc={advancePomodoro}
-            initialTime={initialTime}
-            type={pomodoroIntervals[currentPomodoro].type}
-            setCurrentTime={setCurrentTime}
-            currentTime={currentTime}
+  return (
+    <div className="App">
+      <NavBar />
+      <header className="App-header">
+        <Timer
+          key={currentPomodoro} // Change key to reset Timer
+          advanceFunc={advancePomodoro}
+          initialTime={initialTime}
+          type={pomodoroIntervals[currentPomodoro].type}
+          setCurrentTime={setCurrentTime}
+          currentTime={currentTime}
+          isActive={isActive}
+          setIsActive={setIsActive}
+        />
+        <div>
+          <PomodoroCircles
+            currentPomodoro={currentPomodoro}
             isActive={isActive}
-            setIsActive={setIsActive}
-          />{" "}
-          {/* Use the Timer component */}
-          <div>
-            <PomodoroCircles
-              currentPomodoro={currentPomodoro}
-              isActive={isActive}
-            />
-            <button onClick={advancePomodoro}>Next Pomodoro</button>
-            <button onClick={resetPomodoro}>Reset Pomodoro</button>
-          </div>
-          <PomodoroStatsDisplay history={history} />
-          <PomodoroHistoryDisplay history={history} />
-        </header>
-      </div>
-    );
-  }
+          />
+          <button onClick={advancePomodoro}>Next Pomodoro</button>
+          <button onClick={resetPomodoro}>Reset Pomodoro</button>
+        </div>
+        <PomodoroHistoryDisplay history={history} />
+      </header>
+    </div>
+  );
 }
 
 export default App;
