@@ -51,6 +51,11 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
+  // Fetch the pomodoro history when the session changes
+  useEffect(() => {
+    historyManager.fetchPomodoroHistory("From session useEffect");
+  }, [session]);
+
   return (
     <SessionContext.Provider
       value={{ session, history, setHistory, historyManager }}
