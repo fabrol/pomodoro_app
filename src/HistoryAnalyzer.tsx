@@ -69,8 +69,6 @@ function formatRollupKeys(
         formattedKey = `${key}`; // Format as hour of the day
         break;
       case "week":
-        //const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        //formattedKey = weekdays[parseInt(key)]; // Convert day index to weekday name
         formattedKey = `${key}`;
         break;
       case "month":

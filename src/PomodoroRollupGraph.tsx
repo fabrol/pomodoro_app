@@ -15,14 +15,10 @@ type RollupGraphProps = {
   period: string;
 };
 
-function getLastDayOfMonth(month: number, year: number): number {
-  return new Date(year, month, 0).getDate();
-}
-
 function customTickFormatter(
   tick: string,
   period: string,
-  year: number = new Date().getFullYear()
+  dataLength: number
 ): string {
   switch (period) {
     case "day":
@@ -37,9 +33,7 @@ function customTickFormatter(
       return weekdays[weekdayIndex] || "";
     case "month":
       const firstDays = ["1", "8", "15", "22"];
-      const monthIndex = parseInt(tick) - 1;
-      const lastDay = getLastDayOfMonth(monthIndex + 1, year).toString();
-      if (firstDays.includes(tick) || tick === lastDay) {
+      if (firstDays.includes(tick) || tick === dataLength.toString()) {
         return tick;
       }
       return "";
@@ -107,9 +101,11 @@ const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
       <YAxis type="number" domain={[0, "dataMax"]} hide={true} />
       <XAxis
         dataKey="name"
-        tickFormatter={(tick) => customTickFormatter(tick, period)}
+        tickFormatter={(tick) => customTickFormatter(tick, period, data.length)}
+        fontSize={20}
         tickLine={false}
         axisLine={false}
+        interval={0}
       />
       <Tooltip
         content={<CustomTooltip active={undefined} payload={undefined} />}
