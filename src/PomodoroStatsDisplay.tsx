@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { PomodoroStats, calculatePomodoroStats } from "./HistoryAnalyzer";
 import { PomodoroEntry } from "./PomodoroHistory";
 import PomodoroRollupGraph from "./PomodoroRollupGraph";
+import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
 
 type Props = {
   history: PomodoroEntry[];
@@ -147,6 +148,7 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
         </ul>
       )}
       <PomodoroRollupGraph data={rollupArray} period={period} />
+      <PomodoroHistoryDisplay history={history} />
     </div>
   );
 };

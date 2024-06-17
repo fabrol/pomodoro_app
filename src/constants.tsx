@@ -22,6 +22,12 @@ export const pomodoroIntervals = isTestMode
       { minutes: 30, seconds: 0, type: "longBreak" },
     ];
 
+export const pomoDisplayMapping = {
+  work: "Flow",
+  shortBreak: "Break",
+  longBreak: "Break",
+};
+
 export const totalPomodoros = 8;
 
 export type Time = {

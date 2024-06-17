@@ -2,12 +2,13 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 100%;
-  background:transparent;
+  margin: 0 auto; /* Center the navbar */
+  background: transparent;
   padding: 10px 0;
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: 0;
+  left: 0;
+  right: 0; /* Ensure it spans the full width */
   z-index: 1000; /* Ensures navbar stays on top of other content */
 }
 

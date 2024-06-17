@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Time } from "./constants";
+import { Time, pomoDisplayMapping } from "./constants";
+import { CiPlay1, CiPause1 } from "react-icons/ci";
 
 interface TimerProps {
   initialTime?: Time;
@@ -76,10 +77,30 @@ function Timer({
   };
 
   return (
-    <div className="timer">
+    <div
+      className="timer"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: 0,
+      }}
+    >
+      <h4>{pomoDisplayMapping[type]}</h4>
       <h1>{formatTime()}</h1>
-      <h4>{type}</h4>
-      <button onClick={toggle}>{isActive ? "Pause" : "Start"}</button>
+      <button
+        onClick={toggle}
+        style={{
+          background: "none",
+          border: "none",
+          fontSize: "24px",
+          cursor: "pointer",
+          color: "var(--color-primary)",
+        }}
+      >
+        {isActive ? <CiPause1 /> : <CiPlay1 />}
+      </button>
       <button onClick={reset}>Reset</button>
     </div>
   );

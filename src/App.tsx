@@ -1,15 +1,6 @@
-import "./App.css";
-import React, { useState, useCallback, useEffect, useMemo } from "react";
-import NavBar from "./Navbar";
+import React, { useState, useCallback, useMemo } from "react";
 import Timer from "./Timer"; // Import the Timer component
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
-import PomodoroHistory, { PomodoroEntry } from "./PomodoroHistory";
-import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
-import PomodoroStatsDisplay from "./PomodoroStatsDisplay";
-import { Session, createClient } from "@supabase/supabase-js";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Database } from "./types/database.types";
 import { pomodoroIntervals, Time } from "./constants";
 import { useContext } from "react";
 import { SessionContext } from "./StateProvider"; // Import SessionContext
@@ -78,7 +69,6 @@ function App() {
           <button onClick={advancePomodoro}>Next Pomodoro</button>
           <button onClick={resetPomodoro}>Reset Pomodoro</button>
         </div>
-        <PomodoroHistoryDisplay history={history} />
       </header>
     </div>
   );
