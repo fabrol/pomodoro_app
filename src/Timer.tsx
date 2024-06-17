@@ -1,30 +1,60 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Time, pomoDisplayMapping } from "./constants";
-import { CiPlay1, CiPause1 } from "react-icons/ci";
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
+import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
+import { pomoDisplayMapping, pomodoroIntervals, Time } from "./constants";
+import { useContext } from "react";
+import { SessionContext } from "./StateProvider"; // Import SessionContext
+import { CiPause1, CiPlay1 } from "react-icons/ci";
 
-interface TimerProps {
-  initialTime?: Time;
-  type?: string;
-  advanceFunc: () => void;
-  setCurrentTime: React.Dispatch<
-    React.SetStateAction<{ minutes: number; seconds: number }>
-  >;
-  currentTime: { minutes: number; seconds: number };
-  isActive: boolean;
-  setIsActive: (value: boolean) => void;
-}
+function Timer() {
+  const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
 
-function Timer({
-  initialTime = { minutes: 0, seconds: 4 },
-  type = "work",
-  advanceFunc,
-  setCurrentTime,
-  currentTime,
-  isActive,
-  setIsActive,
-}: TimerProps) {
+  const [currentPomodoro, setCurrentPomodoro] = useState(0);
+  const [currentTime, setCurrentTime] = useState<Time>({
+    minutes: 0,
+    seconds: 0,
+  });
+  const [isActive, setIsActive] = useState(false);
+
+  // Advance the pomodoro and add an entry to the history
+  const advancePomodoro = useCallback(() => {
+    const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
+    setIsActive(false);
+    setCurrentPomodoro(newPomodoroIndex);
+    if (!session?.user?.id) {
+      console.log("No user ID found so can't add pomo");
+      return;
+    }
+
+    historyManager.addEntry({
+      pomodoroIndex: currentPomodoro,
+      timeLeft: currentTime,
+      userId: session?.user?.id,
+      pomoCat: pomodoroIntervals[currentPomodoro].type,
+      pomoDurationMin: pomodoroIntervals[currentPomodoro].minutes,
+      pomoDurationSec: pomodoroIntervals[currentPomodoro].seconds,
+    });
+  }, [currentPomodoro, currentTime]);
+
+  const resetPomodoro = useCallback(() => {
+    setCurrentPomodoro(0);
+    //historyManager.addEntry(currentPomodoro, false, currentTime);
+  }, [currentPomodoro, historyManager, currentTime]);
+
+  const initialTime = useMemo(
+    () => ({
+      minutes: pomodoroIntervals[currentPomodoro].minutes,
+      seconds: pomodoroIntervals[currentPomodoro].seconds,
+    }),
+    [currentPomodoro]
+  );
+
   const intervalRef = useRef<number | null>(null);
-  const advancePomodoro = advanceFunc;
 
   useEffect(() => {
     setCurrentTime(initialTime);
@@ -77,31 +107,32 @@ function Timer({
   };
 
   return (
-    <div
-      className="timer"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        margin: 0,
-      }}
-    >
-      <h4>{pomoDisplayMapping[type]}</h4>
-      <h1>{formatTime()}</h1>
-      <button
-        onClick={toggle}
-        style={{
-          background: "none",
-          border: "none",
-          fontSize: "24px",
-          cursor: "pointer",
-          color: "var(--color-primary)",
-        }}
-      >
-        {isActive ? <CiPause1 /> : <CiPlay1 />}
-      </button>
-      <button onClick={reset}>Reset</button>
+    <div className="timer">
+      <header className="App-header">
+        <h4>{pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}</h4>
+        <h1>{formatTime()}</h1>
+        <button
+          onClick={toggle}
+          style={{
+            background: "none",
+            border: "none",
+            fontSize: "24px",
+            cursor: "pointer",
+            color: "var(--color-primary)",
+          }}
+        >
+          {isActive ? <CiPause1 /> : <CiPlay1 />}
+        </button>
+        <button onClick={reset}>Reset</button>
+        <div>
+          <PomodoroCircles
+            currentPomodoro={currentPomodoro}
+            isActive={isActive}
+          />
+          <button onClick={advancePomodoro}>Next Pomodoro</button>
+          <button onClick={resetPomodoro}>Reset Pomodoro</button>
+        </div>
+      </header>
     </div>
   );
 }

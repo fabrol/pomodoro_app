@@ -1,7 +1,7 @@
 "use client";
 
-import App from "../App";
+import Timer from "../Timer";
 
 export default function HomePage() {
-  return <App />;
+  return <Timer />;
 }
