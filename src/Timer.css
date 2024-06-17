@@ -1,0 +1,22 @@
+.action-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--color-primary);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%; /* Makes the button round */
+    padding: 0.15rem; /* Adjust padding to fit the content */
+    transition: background-color 0.3s; /* Smooth transition for background color */
+  }
+  
+  .action-button:hover {
+    background-color: rgba(173, 173, 173, 0.2); /* Semi-transparent black on hover */
+  }
+
+  .play-button {
+    font-size: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
+  }

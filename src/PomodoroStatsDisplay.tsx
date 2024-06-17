@@ -112,7 +112,15 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
   };
 
   return (
-    <div>
+    <div
+      className="pomodoro-stats"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
       <h3>Pomodoro Statistics</h3>
       <div>
         <select value={period} onChange={handlePeriodChange}>

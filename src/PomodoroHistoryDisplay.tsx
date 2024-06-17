@@ -7,7 +7,7 @@ type Props = {
 
 const PomodoroHistoryDisplay: React.FC<Props> = ({ history }) => {
   return (
-    <div>
+    <div style={{ width: "80vw", margin: "0 auto" }}>
       <h3>Pomodoro History</h3>
       <table style={{ fontSize: "small" }}>
         <thead>

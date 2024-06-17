@@ -16,10 +16,8 @@ export default function RootLayout({
           <title>Focus</title>
         </head>
         <body>
-          <div id="root">
-            <NavBar />
-            {children}
-          </div>
+          <NavBar />
+          {children}
         </body>
       </html>
     </SessionProvider>

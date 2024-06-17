@@ -9,7 +9,10 @@ import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles c
 import { pomoDisplayMapping, pomodoroIntervals, Time } from "./constants";
 import { useContext } from "react";
 import { SessionContext } from "./StateProvider"; // Import SessionContext
-import { CiPause1, CiPlay1 } from "react-icons/ci";
+import { IoMdPause, IoMdPlay, IoMdSkipForward } from "react-icons/io";
+import { BiReset } from "react-icons/bi";
+import { MdRestartAlt, MdPlayArrow, MdPause } from "react-icons/md";
+import "./Timer.css";
 
 function Timer() {
   const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
@@ -107,32 +110,48 @@ function Timer() {
   };
 
   return (
-    <div className="timer">
-      <header className="App-header">
-        <h4>{pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}</h4>
-        <h1>{formatTime()}</h1>
-        <button
-          onClick={toggle}
-          style={{
-            background: "none",
-            border: "none",
-            fontSize: "24px",
-            cursor: "pointer",
-            color: "var(--color-primary)",
-          }}
-        >
-          {isActive ? <CiPause1 /> : <CiPlay1 />}
+    <div
+      className="timer"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: "5vh",
+        //height: "100vh",
+      }}
+    >
+      <div style={{ fontSize: "2rem" }}>
+        {pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}
+      </div>
+      <div
+        style={{ fontSize: "5rem", lineHeight: "4rem", paddingBottom: "1rem" }}
+      >
+        {formatTime()}
+      </div>
+      <PomodoroCircles currentPomodoro={currentPomodoro} isActive={isActive} />
+      <button onClick={toggle} className="action-button play-button">
+        {isActive ? <MdPause /> : <MdPlayArrow />}
+      </button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          opacity: isActive ? 0 : 1, // Control visibility based on isActive
+          transition: "opacity 0.5s ease-in-out", // Smooth transition for opacity
+          pointerEvents: isActive ? "none" : "auto", // Disable interaction when not visible
+        }}
+      >
+        <button onClick={reset} className="action-button" title="Reset Timer">
+          <MdRestartAlt />
         </button>
-        <button onClick={reset}>Reset</button>
-        <div>
-          <PomodoroCircles
-            currentPomodoro={currentPomodoro}
-            isActive={isActive}
-          />
-          <button onClick={advancePomodoro}>Next Pomodoro</button>
-          <button onClick={resetPomodoro}>Reset Pomodoro</button>
-        </div>
-      </header>
+        <button onClick={resetPomodoro} className="action-button">
+          <BiReset />
+        </button>
+        <button onClick={advancePomodoro} className="action-button">
+          <IoMdSkipForward />
+        </button>
+      </div>
     </div>
   );
 }
