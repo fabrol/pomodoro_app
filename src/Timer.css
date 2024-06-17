@@ -1,11 +1,11 @@
 .action-button {
     background: none;
     border: none;
-    font-size: 1.5rem;
+    font-size: 2rem;
     cursor: pointer;
     color: var(--color-primary);
-    width: 2rem;
-    height: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%; /* Makes the button round */
     padding: 0.15rem; /* Adjust padding to fit the content */
     transition: background-color 0.3s; /* Smooth transition for background color */
@@ -16,7 +16,7 @@
   }
 
   .play-button {
-    font-size: 3rem;
-    width: 3.5rem;
-    height: 3.5rem;
+    font-size: 3.5rem;
+    width: 4rem;
+    height: 4rem;
   }

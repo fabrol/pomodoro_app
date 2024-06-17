@@ -9,7 +9,14 @@ function PomodoroCircles({
   isActive: boolean;
 }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        minHeight: "2rem",
+      }}
+    >
       {Array.from({ length: totalPomodoros }, (_, index) => (
         <div
           key={index}

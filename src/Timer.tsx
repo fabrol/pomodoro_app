@@ -125,7 +125,11 @@ function Timer() {
         {pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}
       </div>
       <div
-        style={{ fontSize: "5rem", lineHeight: "4rem", paddingBottom: "1rem" }}
+        style={{
+          fontSize: "5rem",
+          lineHeight: "4rem",
+          paddingBottom: "0.5rem",
+        }}
       >
         {formatTime()}
       </div>
