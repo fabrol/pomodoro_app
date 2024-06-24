@@ -100,8 +100,8 @@ const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
       data={data}
       margin={{
         top: 5,
-        right: 30,
-        left: 20,
+        right: 10,
+        left: 10,
         bottom: 5,
       }}
       barSize={20}
@@ -125,8 +125,6 @@ const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
           fill={theme.colors.myGreen[8]}
           background={{ fill: "#ccc", radius: 10, fillOpacity: 0.2 }}
           radius={10}
-          animationBegin={20}
-          animationEasing="ease-in"
           label={(props) => renderCustomBarLabel(props)}
         ></Bar>
       }

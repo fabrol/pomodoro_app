@@ -12,6 +12,7 @@ export const metadata = {
 const theme = createTheme({
   fontSizes: {
     xs: "1rem",
+    smm: "1.2rem",
     sm: "1.5rem",
     md: "2rem",
     lg: "2.5rem",

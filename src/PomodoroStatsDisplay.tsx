@@ -5,9 +5,16 @@ import { PomodoroStats, calculatePomodoroStats } from "./HistoryAnalyzer";
 import { PomodoroEntry } from "./PomodoroHistory";
 import PomodoroRollupGraph from "./PomodoroRollupGraph";
 import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
-import { Text, SegmentedControl, Button, ActionIcon } from "@mantine/core";
+import {
+  Text,
+  SegmentedControl,
+  Button,
+  ActionIcon,
+  Divider,
+} from "@mantine/core";
 import { MdChevronRight, MdChevronLeft } from "react-icons/md";
 import { useMantineTheme } from "@mantine/core";
+import { isTestMode } from "./constants";
 
 type Props = {
   history: PomodoroEntry[];
@@ -117,6 +124,12 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
     }
   };
 
+  const rowStyle = {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%",
+  };
+
   return (
     <div
       className="pomodoro-stats"
@@ -179,35 +192,58 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
           </ActionIcon>
         </div>
       </div>
-      <PomodoroRollupGraph data={rollupArray} period={period} />
-      {stats && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "start",
-            //gap: "0.5rem",
-          }}
-        >
-          <Text fz="sm">
-            Total Work Time: {stats.totalWorkTime.minutes} minutes{" "}
-            {stats.totalWorkTime.seconds} seconds
-          </Text>
-          <Text fz="sm">
-            Actual Work Time: {stats.actualWorkTime.minutes} minutes{" "}
-            {stats.actualWorkTime.seconds} seconds
-          </Text>
-          <Text fz="sm">
-            Total Break Time: {stats.totalBreakTime.minutes} minutes{" "}
-            {stats.totalBreakTime.seconds} seconds
-          </Text>
-          <Text fz="sm">Work Sessions: {stats.workSessions}</Text>
-          <Text fz="sm">Break Sessions: {stats.breakSessions}</Text>
-          <Text fz="sm">Total Cycles: {stats.totalCycles}</Text>
-          <Text fz="sm">Work Interruptions: {stats.workInterruptions}</Text>
-        </div>
-      )}
-      <PomodoroHistoryDisplay history={history} />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <PomodoroRollupGraph data={rollupArray} period={period} />
+        {stats && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "start",
+              width: "100%", // Ensure the container takes full width
+            }}
+          >
+            <Text fz="sm" style={rowStyle}>
+              Flows <span>{stats.workSessions}</span>
+            </Text>
+            <Text fz="smm" style={rowStyle}>
+              Time{" "}
+              <span>
+                {stats.totalWorkTime.minutes}m {stats.totalWorkTime.seconds}s
+              </span>
+            </Text>
+            <Text fz="smm" style={rowStyle}>
+              Tracked Time{" "}
+              <span>
+                {stats.actualWorkTime.minutes}m {stats.actualWorkTime.seconds}s
+              </span>
+            </Text>
+            <Text fz="smm" style={rowStyle}>
+              Cycles<span>{stats.totalCycles}</span>
+            </Text>
+            <Divider my="sm" />
+            <Text fz="sm" style={rowStyle}>
+              Breaks<span>{stats.breakSessions}</span>
+            </Text>
+            <Text fz="smm" style={rowStyle}>
+              Time{" "}
+              <span>
+                {stats.totalBreakTime.minutes}m {stats.totalBreakTime.seconds}s
+              </span>
+            </Text>
+            <Text fz="smm" style={rowStyle}>
+              Interruptions<span>{stats.workInterruptions}</span>
+            </Text>
+          </div>
+        )}
+      </div>
+      {isTestMode && <PomodoroHistoryDisplay history={history} />}
     </div>
   );
 };
