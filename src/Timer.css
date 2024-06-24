@@ -4,8 +4,8 @@
     font-size: 2rem;
     cursor: pointer;
     color: var(--color-primary);
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%; /* Makes the button round */
     padding: 0.15rem; /* Adjust padding to fit the content */
     transition: background-color 0.3s; /* Smooth transition for background color */
@@ -19,4 +19,7 @@
     font-size: 3.5rem;
     width: 4rem;
     height: 4rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
   }

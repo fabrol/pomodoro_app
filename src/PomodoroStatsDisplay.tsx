@@ -5,12 +5,18 @@ import { PomodoroStats, calculatePomodoroStats } from "./HistoryAnalyzer";
 import { PomodoroEntry } from "./PomodoroHistory";
 import PomodoroRollupGraph from "./PomodoroRollupGraph";
 import PomodoroHistoryDisplay from "./PomodoroHistoryDisplay";
+import { Text, SegmentedControl, Button, ActionIcon } from "@mantine/core";
+import { MdChevronRight, MdChevronLeft } from "react-icons/md";
+import { useMantineTheme } from "@mantine/core";
 
 type Props = {
   history: PomodoroEntry[];
 };
 
 const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
+  const theme = useMantineTheme();
+  const minHeight = theme.fontSizes.lg;
+
   const [period, setPeriod] = useState("day"); // 'day', 'week', 'month', 'year'
   const [currentDate, setCurrentDate] = useState(new Date());
   const [stats, setStats] = useState<PomodoroStats | null>(null);
@@ -68,8 +74,8 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
     setRollupArray(newRollupArray);
   }, [period, currentDate, history]);
 
-  const handlePeriodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setPeriod(event.target.value);
+  const handlePeriodChange = (value: string) => {
+    setPeriod(value);
   };
 
   const navigateDate = (direction: number) => {
@@ -121,19 +127,57 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
         justifyContent: "space-between",
       }}
     >
-      <h3>Pomodoro Statistics</h3>
-      <div>
-        <select value={period} onChange={handlePeriodChange}>
-          <option value="day">Day</option>
-          <option value="week">Week</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-        </select>
-        <button onClick={() => navigateDate(-1)}>Previous</button>
-        <button onClick={() => navigateDate(1)}>Next</button>
-      </div>
-      <div>
-        <strong>Selected Period:</strong> {formatDateDisplay()}
+      <Text fz="sm">Pomodoro Statistics</Text>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          marginTop: "0.5rem",
+        }}
+      >
+        <SegmentedControl
+          value={period}
+          onChange={handlePeriodChange}
+          data={["day", "week", "month", "year"].map((value) => ({
+            value,
+            label: <Text fz="xs">{value}</Text>,
+          }))}
+          styles={{
+            label: {
+              padding: "0px 12px",
+            },
+          }}
+        />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            minHeight: minHeight,
+          }}
+        >
+          <ActionIcon
+            onClick={() => navigateDate(-1)}
+            size="sm"
+            style={{ background: "transparent" }}
+          >
+            <MdChevronLeft />
+          </ActionIcon>
+          {period === "week" ? (
+            <Text fz="xs">{formatDateDisplay()}</Text>
+          ) : (
+            <Text fz="sm">{formatDateDisplay()}</Text>
+          )}
+          <ActionIcon
+            onClick={() => navigateDate(1)}
+            size="sm"
+            style={{ background: "transparent" }}
+          >
+            <MdChevronRight />
+          </ActionIcon>
+        </div>
       </div>
       {stats && (
         <ul>
