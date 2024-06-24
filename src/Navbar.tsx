@@ -3,22 +3,29 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { AiOutlineHome, AiFillHome } from "react-icons/ai";
-import { BsBarChart, BsBarChartFill } from "react-icons/bs";
+import { PiFlowerLotusLight, PiFlowerLotusFill } from "react-icons/pi";
+import { PiUser, PiUserFill } from "react-icons/pi";
+import { PiChartPie, PiChartPieFill } from "react-icons/pi";
 import "./navbar.css";
 
 const navItems = [
   {
+    path: "/profile",
+    label: "profile",
+    IconOutline: PiUser,
+    IconFilled: PiUserFill,
+  },
+  {
     path: "/",
     label: "home",
-    IconOutline: AiOutlineHome,
-    IconFilled: AiFillHome,
+    IconOutline: PiFlowerLotusLight,
+    IconFilled: PiFlowerLotusFill,
   },
   {
     path: "/stats",
     label: "stats",
-    IconOutline: BsBarChart,
-    IconFilled: BsBarChartFill,
+    IconOutline: PiChartPie,
+    IconFilled: PiChartPieFill,
   },
 ];
 
