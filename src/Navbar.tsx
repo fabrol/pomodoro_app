@@ -10,12 +10,6 @@ import "./navbar.css";
 
 const navItems = [
   {
-    path: "/profile",
-    label: "profile",
-    IconOutline: PiUser,
-    IconFilled: PiUserFill,
-  },
-  {
     path: "/",
     label: "home",
     IconOutline: PiFlowerLotusLight,
