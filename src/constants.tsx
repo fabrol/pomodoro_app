@@ -1,4 +1,4 @@
-export const isTestMode = true; // Set this to false in production
+export const isTestMode = false; // Set this to false in production
 
 export const pomodoroIntervals = isTestMode
   ? [
