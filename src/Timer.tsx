@@ -126,14 +126,25 @@ function Timer() {
       </div>
       <div
         style={{
-          fontSize: "5rem",
-          lineHeight: "4rem",
-          paddingBottom: "0.5rem",
+          width: "100%",
+          minWidth: "13rem",
         }}
       >
-        {formatTime()}
+        <div
+          style={{
+            fontSize: "5rem",
+            lineHeight: "4rem",
+            paddingBottom: "0.5rem",
+            textAlign: "center",
+          }}
+        >
+          {formatTime()}
+        </div>
+        <PomodoroCircles
+          currentPomodoro={currentPomodoro}
+          isActive={isActive}
+        />
       </div>
-      <PomodoroCircles currentPomodoro={currentPomodoro} isActive={isActive} />
       <button onClick={toggle} className="action-button play-button">
         {isActive ? <MdPause /> : <MdPlayArrow />}
       </button>
@@ -149,10 +160,18 @@ function Timer() {
         <button onClick={reset} className="action-button" title="Reset Timer">
           <MdRestartAlt />
         </button>
-        <button onClick={resetPomodoro} className="action-button">
+        <button
+          onClick={resetPomodoro}
+          className="action-button"
+          title="Reset Pomodoro"
+        >
           <BiReset />
         </button>
-        <button onClick={advancePomodoro} className="action-button">
+        <button
+          onClick={advancePomodoro}
+          className="action-button"
+          title="Next"
+        >
           <IoMdSkipForward />
         </button>
       </div>
