@@ -9,6 +9,7 @@ import {
   Legend,
   Cell,
 } from "recharts";
+import { useMantineTheme } from "@mantine/core"; // Import useMantineTheme
 
 type RollupGraphProps = {
   data: Array<{ name: string; count: number }>;
@@ -68,16 +69,23 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
+  const theme = useMantineTheme(); // Access the theme
+
   // Custom label component that only shows labels for non-zero values
   const renderCustomBarLabel = ({ x, y, width, height, value }) => {
+    const dy = height < 30 ? -5 : 18;
+    const fs =
+      value.toString().length > 1
+        ? width / (value.toString().length * 0.8)
+        : width * 0.9;
     return (
       <text
         x={x + width / 2}
         y={y}
-        fill="black"
+        fill="white"
         textAnchor="middle"
-        dy={25}
-        fontSize={Math.max(20, width / (value.toString().length + 1))}
+        dy={dy}
+        fontSize={fs}
       >
         {value > 0 ? value : ""}
       </text>
@@ -114,7 +122,7 @@ const PomodoroRollupGraph: React.FC<RollupGraphProps> = ({ data, period }) => {
       {
         <Bar
           dataKey="count"
-          fill="#8884d8"
+          fill={theme.colors.myGreen[8]}
           background={{ fill: "#ccc", radius: 10, fillOpacity: 0.2 }}
           radius={10}
           animationBegin={20}

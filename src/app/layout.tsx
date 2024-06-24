@@ -17,6 +17,21 @@ const theme = createTheme({
     lg: "2.5rem",
     xl: "3rem",
   },
+  colors: {
+    myGreen: [
+      "jE7FDF0",
+      "#BDFAD4",
+      "#93F6B8",
+      "#68F39D",
+      "#3EEF81",
+      "#13EC65",
+      "#0FBD51",
+      "#0C8D3D",
+      "#085E29",
+      "#042F14",
+    ],
+  },
+  primaryColor: "myGreen",
 });
 
 export default function RootLayout({

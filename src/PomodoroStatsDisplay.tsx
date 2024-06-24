@@ -179,27 +179,34 @@ const PomodoroStatsDisplay: React.FC<Props> = ({ history }) => {
           </ActionIcon>
         </div>
       </div>
+      <PomodoroRollupGraph data={rollupArray} period={period} />
       {stats && (
-        <ul>
-          <li>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "start",
+            //gap: "0.5rem",
+          }}
+        >
+          <Text fz="sm">
             Total Work Time: {stats.totalWorkTime.minutes} minutes{" "}
             {stats.totalWorkTime.seconds} seconds
-          </li>
-          <li>
+          </Text>
+          <Text fz="sm">
             Actual Work Time: {stats.actualWorkTime.minutes} minutes{" "}
             {stats.actualWorkTime.seconds} seconds
-          </li>
-          <li>
+          </Text>
+          <Text fz="sm">
             Total Break Time: {stats.totalBreakTime.minutes} minutes{" "}
             {stats.totalBreakTime.seconds} seconds
-          </li>
-          <li>Work Sessions: {stats.workSessions}</li>
-          <li>Break Sessions: {stats.breakSessions}</li>
-          <li>Total Cycles: {stats.totalCycles}</li>
-          <li>Work Interruptions: {stats.workInterruptions}</li>
-        </ul>
+          </Text>
+          <Text fz="sm">Work Sessions: {stats.workSessions}</Text>
+          <Text fz="sm">Break Sessions: {stats.breakSessions}</Text>
+          <Text fz="sm">Total Cycles: {stats.totalCycles}</Text>
+          <Text fz="sm">Work Interruptions: {stats.workInterruptions}</Text>
+        </div>
       )}
-      <PomodoroRollupGraph data={rollupArray} period={period} />
       <PomodoroHistoryDisplay history={history} />
     </div>
   );
