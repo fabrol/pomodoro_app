@@ -8,7 +8,7 @@ import React, {
 import PomodoroCircles from "./PomodoroCircles"; // Import the PomodoroCircles component
 import { pomoDisplayMapping, pomodoroIntervals, Time } from "./constants";
 import { useContext } from "react";
-import { SessionContext } from "./StateProvider"; // Import SessionContext
+import { SessionContext } from "./SessionProvider"; // Import SessionContext
 import { IoMdPause, IoMdPlay, IoMdSkipForward } from "react-icons/io";
 import { BiReset } from "react-icons/bi";
 import { MdRestartAlt, MdPlayArrow, MdPause } from "react-icons/md";

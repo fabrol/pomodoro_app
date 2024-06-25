@@ -1,6 +1,6 @@
 import "../index.css";
 import NavBar from "../Navbar";
-import { SessionProvider } from "../StateProvider";
+import { SessionProvider } from "../SessionProvider";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
 
