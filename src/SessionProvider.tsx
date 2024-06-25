@@ -5,6 +5,7 @@ import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { PomodoroEntry } from "./PomodoroHistory";
 import { createClient } from "@supabase/supabase-js";
 import PomodoroHistory from "./PomodoroHistory";
+import { AuthenticationForm } from "./Login";
 
 const supabaseUrl = "https://iyrfwbftinurdoauzggs.supabase.co";
 const supabaseAnonKey =
@@ -60,7 +61,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
     <SessionContext.Provider
       value={{ session, history, setHistory, historyManager }}
     >
-      {children}
+      {!session && <AuthenticationForm client={supabase} />}
+      {session && children}
     </SessionContext.Provider>
   );
 };

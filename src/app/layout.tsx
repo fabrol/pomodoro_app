@@ -1,13 +1,10 @@
+"use client";
+
 import "../index.css";
 import NavBar from "../Navbar";
 import { SessionProvider } from "../SessionProvider";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
-
-export const metadata = {
-  title: "Focus",
-  description: "Pomodoro app",
-};
 
 const theme = createTheme({
   fontSizes: {
@@ -41,21 +38,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SessionProvider>
-      <html lang="en">
-        <head>
-          <meta name="theme-color" content="#000000" />
-          <meta name="description" content="Pomodoro app" />
-          <ColorSchemeScript />
-          <title>Focus</title>
-        </head>
-        <body>
+    <html lang="en">
+      <head>
+        <meta name="theme-color" content="#000000" />
+        <meta name="description" content="Pomodoro app" />
+        <ColorSchemeScript />
+        <title>Focus</title>
+      </head>
+      <body>
+        <MantineProvider theme={theme} defaultColorScheme="dark">
           <NavBar />
-          <MantineProvider theme={theme} defaultColorScheme="dark">
-            {children}
-          </MantineProvider>
-        </body>
-      </html>
-    </SessionProvider>
+          <SessionProvider>{children}</SessionProvider>
+        </MantineProvider>
+      </body>
+    </html>
   );
 }
