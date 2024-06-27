@@ -38,6 +38,17 @@ export function AuthenticationForm({ client }: { client: SupabaseClient }) {
     redirect("/");
   }
 
+  async function anonLogin(client: SupabaseClient) {
+    const { data, error } = await client.auth.signInAnonymously();
+    console.log(data);
+
+    if (error) {
+      redirect("/error");
+    }
+
+    redirect("/");
+  }
+
   const [type, toggle] = useToggle(["login", "register"]);
   const form = useForm({
     initialValues: {
@@ -123,6 +134,7 @@ export function AuthenticationForm({ client }: { client: SupabaseClient }) {
               type="button"
               c={theme.colors.myGreen[6]}
               size="xs"
+              onClick={() => anonLogin(client)}
             >
               continue locally
             </Anchor>
