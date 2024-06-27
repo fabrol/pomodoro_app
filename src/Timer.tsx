@@ -13,6 +13,7 @@ import { IoMdPause, IoMdPlay, IoMdSkipForward } from "react-icons/io";
 import { BiReset } from "react-icons/bi";
 import { MdRestartAlt, MdPlayArrow, MdPause } from "react-icons/md";
 import "./Timer.css";
+import TomatoAnimation from "./Tomatoes";
 
 function Timer() {
   const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
@@ -118,7 +119,6 @@ function Timer() {
         alignItems: "center",
         justifyContent: "space-between",
         marginTop: "5vh",
-        //height: "100vh",
       }}
     >
       <div style={{ fontSize: "2rem" }}>
@@ -175,6 +175,14 @@ function Timer() {
           <IoMdSkipForward />
         </button>
       </div>
+      <TomatoAnimation
+        isActive={isActive}
+        currentTime={currentTime.minutes * 60 + currentTime.seconds}
+        totalTime={
+          pomodoroIntervals[currentPomodoro].minutes * 60 +
+          pomodoroIntervals[currentPomodoro].seconds
+        }
+      />
     </div>
   );
 }
