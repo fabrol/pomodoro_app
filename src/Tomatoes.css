@@ -16,7 +16,7 @@
   background-image: url('/tomato.svg');
   background-size: cover;
   animation: fadeToBucket 5s forwards;
-  --top-y: 10;
+  --row: 0;
 }
 
 @keyframes fadeToBucket {
@@ -25,6 +25,6 @@
   }
   100% {
     opacity: 1;
-    transform: translateY(calc(100vh - var(--top-y) * 1vh - 2rem));
+    transform: translateY(var(--row));
   }
 }

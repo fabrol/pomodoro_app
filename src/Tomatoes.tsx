@@ -1,20 +1,26 @@
 import React, { createRef, useEffect, useRef, useState } from "react";
 import "./Tomatoes.css";
 
+const TOMATO_HEIGHT = 13; // in px, but needs to be translated from VH?
+
 const TomatoAnimation: React.FC<{
   isActive: boolean;
   currentTime: number;
   totalTime: number;
 }> = ({ isActive, currentTime, totalTime }) => {
   const [tomatoes, setTomatoes] = useState<
-    { id: number; left: number; top: number }[]
+    { id: number; left: number; topPx: number; deltaY: number }[]
   >([]);
   const [vertRow, setVertRow] = useState<{ rowNum: number; rowIdxs: number[] }>(
     {
-      rowNum: 0,
+      rowNum: -1,
       rowIdxs: [],
     }
   );
+  const rowTracker = useRef({
+    rowNum: 0,
+    rowIdxs: [] as number[],
+  });
 
   const parentRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({
@@ -48,30 +54,74 @@ const TomatoAnimation: React.FC<{
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const totalTomatoes = 200;
+  const totalTomatoes = useRef(0);
+  const TotalRows = useRef(0);
+  const TomatoesPerRow = useRef(0);
+
+  useEffect(() => {
+    if (TotalRows.current === 0) {
+      TotalRows.current = Math.ceil(dimensions.height / TOMATO_HEIGHT);
+      TomatoesPerRow.current = Math.ceil(dimensions.width / TOMATO_HEIGHT);
+      totalTomatoes.current = TotalRows.current * TomatoesPerRow.current;
+    }
+  }, [dimensions]);
 
   useEffect(() => {
     if (isActive) {
       const percentageTimeLeft = currentTime / totalTime;
       const activeTomatoes = Math.floor(
-        totalTomatoes * (1 - percentageTimeLeft)
+        totalTomatoes.current * (1 - percentageTimeLeft)
       );
 
-      if (vertRow.rowIdxs.length === 0) {
-        setVertRow((prev) => ({
-          rowNum: prev.rowNum + 1,
-          rowIdxs: Array.from({ length: 10 }, (_, index) => index),
-        }));
+      if (!activeTomatoes) {
+        return;
       }
-      setTomatoes((prevTomatoes) => {
-        const newTomatoes = Array.from(
-          { length: activeTomatoes },
-          (_, index) => ({
-            id: Date.now() + index,
-            left: Math.random() * 90,
-            top: Math.random() * 50,
-          })
+
+      // if the row is empty, create a new row and shuffle it
+      if (rowTracker.current.rowIdxs.length === 0) {
+        let newRowIdxs = Array.from(
+          { length: TomatoesPerRow.current },
+          (_, index) => index
         );
+        newRowIdxs.sort(() => 0.5 - Math.random());
+
+        rowTracker.current.rowIdxs = newRowIdxs;
+        rowTracker.current.rowNum++;
+      }
+
+      const newTomatoesCount = activeTomatoes - tomatoes.length;
+      const newIdxs = rowTracker.current.rowIdxs.splice(0, newTomatoesCount);
+
+      const newTomatoes = Array.from(
+        { length: newTomatoesCount },
+        (_, index) => {
+          const left =
+            newIdxs[index] * (100 / TomatoesPerRow.current) +
+            (0.5 - Math.random()) * 5;
+          const top = Math.random() * 50;
+          const bottom =
+            dimensions.windowHeight - rowTracker.current.rowNum * TOMATO_HEIGHT;
+          const topPx = (top * dimensions.windowHeight) / 100;
+          const deltaY = bottom - topPx;
+
+          // Debugging lines
+          console.log(`Tomato ${index}:`);
+          console.log(`  newIdxs: ${newIdxs}`);
+          console.log(`  newIdxs[index]: ${newIdxs[index]}`);
+          console.log(`  left: ${left}`);
+          console.log(`  top: ${top}`);
+          console.log(`  bottom: ${bottom}`);
+
+          return {
+            id: Date.now() + index,
+            left,
+            topPx,
+            deltaY,
+          };
+        }
+      );
+
+      setTomatoes((prevTomatoes) => {
         return [...prevTomatoes, ...newTomatoes];
       });
     }
@@ -86,14 +136,9 @@ const TomatoAnimation: React.FC<{
           style={
             {
               left: `${tomato.left}%`,
-              top: `${tomato.top}%`,
-              "--top-y": `${tomato.top}`,
+              top: `${tomato.topPx}px`,
+              "--row": `${tomato.deltaY}px`,
             } as React.CSSProperties
-          }
-          onAnimationStart={() =>
-            console.log(
-              `Animation started for tomato ${tomato.id} with --top-y: ${tomato.top}%`
-            )
           }
         />
       ))}
