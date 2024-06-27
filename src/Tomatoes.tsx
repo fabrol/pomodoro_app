@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { createRef, useEffect, useRef, useState } from "react";
 import "./Tomatoes.css";
 
 const TomatoAnimation: React.FC<{
@@ -9,19 +9,60 @@ const TomatoAnimation: React.FC<{
   const [tomatoes, setTomatoes] = useState<
     { id: number; left: number; top: number }[]
   >([]);
-  const [lastActiveTomatoes, setLastActiveTomatoes] = useState(0);
+  const [vertRow, setVertRow] = useState<{ rowNum: number; rowIdxs: number[] }>(
+    {
+      rowNum: 0,
+      rowIdxs: [],
+    }
+  );
+
+  const parentRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    height: 0,
+    windowHeight: 0,
+    windowWidth: 0,
+  });
+
+  function handleResize() {
+    console.log("resizing");
+    if (parentRef.current) {
+      const { current } = parentRef;
+      const boundingRect = current.getBoundingClientRect();
+      const { width, height } = boundingRect;
+      setDimensions({
+        width: Math.round(width),
+        height: Math.round(height),
+        windowHeight: window.innerHeight,
+        windowWidth: window.innerWidth,
+      });
+    }
+  }
+
+  React.useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const totalTomatoes = 200;
 
   useEffect(() => {
     if (isActive) {
-      const totalTomatoes = 200; // Adjust this number based on how many tomatoes you want to fill the screen
       const percentageTimeLeft = currentTime / totalTime;
       const activeTomatoes = Math.floor(
         totalTomatoes * (1 - percentageTimeLeft)
       );
 
+      if (vertRow.rowIdxs.length === 0) {
+        setVertRow((prev) => ({
+          rowNum: prev.rowNum + 1,
+          rowIdxs: Array.from({ length: 10 }, (_, index) => index),
+        }));
+      }
       setTomatoes((prevTomatoes) => {
         const newTomatoes = Array.from(
-          { length: activeTomatoes - lastActiveTomatoes },
+          { length: activeTomatoes },
           (_, index) => ({
             id: Date.now() + index,
             left: Math.random() * 90,
@@ -30,19 +71,12 @@ const TomatoAnimation: React.FC<{
         );
         return [...prevTomatoes, ...newTomatoes];
       });
-
-      setLastActiveTomatoes(activeTomatoes);
+      console.log(dimensions);
     }
-  }, [isActive, currentTime, totalTime, lastActiveTomatoes]);
-
-  useEffect(() => {
-    if (!isActive) {
-      setLastActiveTomatoes(tomatoes.length);
-    }
-  }, [isActive, tomatoes.length]);
+  }, [isActive, currentTime, totalTime]);
 
   return (
-    <div className="tomato-container">
+    <div className="tomato-container" ref={parentRef}>
       {tomatoes.map((tomato) => (
         <div
           key={tomato.id}
@@ -61,7 +95,6 @@ const TomatoAnimation: React.FC<{
           }
         />
       ))}
-      <div className="bucket" />
     </div>
   );
 };

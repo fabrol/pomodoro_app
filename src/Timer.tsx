@@ -112,68 +112,73 @@ function Timer() {
 
   return (
     <div
-      className="timer"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginTop: "5vh",
-      }}
+      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <div style={{ fontSize: "2rem" }}>
-        {pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}
-      </div>
       <div
-        style={{
-          width: "100%",
-          minWidth: "13rem",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "5rem",
-            lineHeight: "4rem",
-            paddingBottom: "0.5rem",
-            textAlign: "center",
-          }}
-        >
-          {formatTime()}
-        </div>
-        <PomodoroCircles
-          currentPomodoro={currentPomodoro}
-          isActive={isActive}
-        />
-      </div>
-      <button onClick={toggle} className="action-button play-button">
-        {isActive ? <MdPause /> : <MdPlayArrow />}
-      </button>
-      <div
+        className="timer"
         style={{
           display: "flex",
-          flexDirection: "row",
-          opacity: isActive ? 0 : 1, // Control visibility based on isActive
-          transition: "opacity 0.5s ease-in-out", // Smooth transition for opacity
-          pointerEvents: isActive ? "none" : "auto", // Disable interaction when not visible
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginTop: "5vh",
+          width: "30vw",
         }}
       >
-        <button onClick={reset} className="action-button" title="Reset Timer">
-          <MdRestartAlt />
-        </button>
-        <button
-          onClick={resetPomodoro}
-          className="action-button"
-          title="Reset Pomodoro"
+        <div style={{ fontSize: "2rem" }}>
+          {pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}
+        </div>
+        <div
+          style={{
+            width: "100%",
+            minWidth: "13rem",
+          }}
         >
-          <BiReset />
+          <div
+            style={{
+              fontSize: "5rem",
+              lineHeight: "4rem",
+              paddingBottom: "0.5rem",
+              textAlign: "center",
+            }}
+          >
+            {formatTime()}
+          </div>
+          <PomodoroCircles
+            currentPomodoro={currentPomodoro}
+            isActive={isActive}
+          />
+        </div>
+        <button onClick={toggle} className="action-button play-button">
+          {isActive ? <MdPause /> : <MdPlayArrow />}
         </button>
-        <button
-          onClick={advancePomodoro}
-          className="action-button"
-          title="Next"
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            opacity: isActive ? 0 : 1, // Control visibility based on isActive
+            transition: "opacity 0.5s ease-in-out", // Smooth transition for opacity
+            pointerEvents: isActive ? "none" : "auto", // Disable interaction when not visible
+          }}
         >
-          <IoMdSkipForward />
-        </button>
+          <button onClick={reset} className="action-button" title="Reset Timer">
+            <MdRestartAlt />
+          </button>
+          <button
+            onClick={resetPomodoro}
+            className="action-button"
+            title="Reset Pomodoro"
+          >
+            <BiReset />
+          </button>
+          <button
+            onClick={advancePomodoro}
+            className="action-button"
+            title="Next"
+          >
+            <IoMdSkipForward />
+          </button>
+        </div>
       </div>
       <TomatoAnimation
         isActive={isActive}
