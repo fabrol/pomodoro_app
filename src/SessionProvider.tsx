@@ -37,6 +37,31 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
   const historyManager = new PomodoroHistory({ supabase, history, setHistory });
 
   useEffect(() => {
+    const signInAnonymously = async () => {
+      if (session) {
+        return;
+      }
+
+      console.log("Getting session in anon func");
+      const {
+        data: { session: sess },
+      } = await supabase.auth.getSession();
+
+      if (sess) {
+        console.log("Got session in anon func");
+        setSession(sess);
+      } else {
+        console.log("Signing in anonymously");
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (error) {
+          console.error("Error signing in anonymously:", error);
+        }
+      }
+    };
+    signInAnonymously();
+  }, []);
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -61,7 +86,6 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
     <SessionContext.Provider
       value={{ session, history, setHistory, historyManager }}
     >
-      {!session && <AuthenticationForm client={supabase} />}
       {session && children}
     </SessionContext.Provider>
   );
