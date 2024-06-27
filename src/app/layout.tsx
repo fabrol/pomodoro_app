@@ -47,8 +47,10 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider theme={theme} defaultColorScheme="dark">
-          <NavBar />
-          <SessionProvider>{children}</SessionProvider>
+          <div className="root">
+            <NavBar />
+            <SessionProvider>{children}</SessionProvider>
+          </div>
         </MantineProvider>
       </body>
     </html>

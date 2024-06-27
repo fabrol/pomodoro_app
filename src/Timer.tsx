@@ -112,7 +112,12 @@ function Timer() {
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        flex: 1,
+      }}
     >
       <div
         className="timer"

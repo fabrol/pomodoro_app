@@ -24,8 +24,11 @@ const TomatoAnimation: React.FC<{
     windowWidth: 0,
   });
 
+  useEffect(() => {
+    console.log(dimensions);
+  }, [dimensions]);
+
   function handleResize() {
-    console.log("resizing");
     if (parentRef.current) {
       const { current } = parentRef;
       const boundingRect = current.getBoundingClientRect();
@@ -71,7 +74,6 @@ const TomatoAnimation: React.FC<{
         );
         return [...prevTomatoes, ...newTomatoes];
       });
-      console.log(dimensions);
     }
   }, [isActive, currentTime, totalTime]);
 
