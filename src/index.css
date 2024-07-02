@@ -12,6 +12,7 @@ body {
   --color-primary: #F5F5F5;
   --color-secondary: #143f08;
   overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 .root {

@@ -63,6 +63,9 @@ const TomatoAnimation: React.FC<{
       TotalRows.current = Math.ceil(dimensions.height / TOMATO_HEIGHT);
       TomatoesPerRow.current = Math.ceil(dimensions.width / TOMATO_HEIGHT);
       totalTomatoes.current = TotalRows.current * TomatoesPerRow.current;
+      console.log(`Total rows: ${TotalRows.current}`);
+      console.log(`Tomatoes per row: ${TomatoesPerRow.current}`);
+      console.log(`Total tomatoes: ${totalTomatoes.current}`);
     }
   }, [dimensions]);
 
@@ -77,40 +80,44 @@ const TomatoAnimation: React.FC<{
         return;
       }
 
-      // if the row is empty, create a new row and shuffle it
-      if (rowTracker.current.rowIdxs.length === 0) {
-        let newRowIdxs = Array.from(
-          { length: TomatoesPerRow.current },
-          (_, index) => index
-        );
-        newRowIdxs.sort(() => 0.5 - Math.random());
+      let newTomatoesCount = activeTomatoes - tomatoes.length;
 
-        rowTracker.current.rowIdxs = newRowIdxs;
-        rowTracker.current.rowNum++;
-      }
+      while (newTomatoesCount > 0) {
+        // if the row is empty, create a new row and shuffle it
+        if (rowTracker.current.rowIdxs.length === 0) {
+          let newRowIdxs = Array.from(
+            { length: TomatoesPerRow.current },
+            (_, index) => index
+          );
+          newRowIdxs.sort(() => 0.5 - Math.random());
 
-      const newTomatoesCount = activeTomatoes - tomatoes.length;
-      const newIdxs = rowTracker.current.rowIdxs.splice(0, newTomatoesCount);
+          rowTracker.current.rowIdxs = newRowIdxs;
+          rowTracker.current.rowNum++;
+        }
 
-      const newTomatoes = Array.from(
-        { length: newTomatoesCount },
-        (_, index) => {
+        let rowTomatoes = Math.min(newTomatoesCount, TomatoesPerRow.current);
+        const newIdxs = rowTracker.current.rowIdxs.splice(0, rowTomatoes);
+
+        const newTomatoes = Array.from({ length: rowTomatoes }, (_, index) => {
           const left =
             newIdxs[index] * (100 / TomatoesPerRow.current) +
             (0.5 - Math.random()) * 5;
-          const top = Math.random() * 50;
+          const top = Math.random() * 30;
           const bottom =
-            dimensions.windowHeight - rowTracker.current.rowNum * TOMATO_HEIGHT;
+            dimensions.windowHeight -
+            rowTracker.current.rowNum * TOMATO_HEIGHT -
+            TOMATO_HEIGHT;
           const topPx = (top * dimensions.windowHeight) / 100;
           const deltaY = bottom - topPx;
 
-          // Debugging lines
-          console.log(`Tomato ${index}:`);
-          console.log(`  newIdxs: ${newIdxs}`);
-          console.log(`  newIdxs[index]: ${newIdxs[index]}`);
-          console.log(`  left: ${left}`);
-          console.log(`  top: ${top}`);
-          console.log(`  bottom: ${bottom}`);
+          /*
+            console.log(`Tomato ${index}:`);
+            console.log(`  newIdxs: ${newIdxs}`);
+            console.log(`  newIdxs[index]: ${newIdxs[index]}`);
+            console.log(`  left: ${left}`);
+            console.log(`  bottom: ${bottom}`);
+            console.log(`  row: ${rowTracker.current.rowNum}`);
+            */
 
           return {
             id: Date.now() + index,
@@ -118,12 +125,18 @@ const TomatoAnimation: React.FC<{
             topPx,
             deltaY,
           };
-        }
-      );
+        });
 
-      setTomatoes((prevTomatoes) => {
-        return [...prevTomatoes, ...newTomatoes];
-      });
+        console.log(
+          `Current time: ${currentTime} Active: ${activeTomatoes} New: ${newTomatoesCount} Row: ${rowTracker.current.rowNum} Row Tomatoes: ${rowTomatoes}`
+        );
+
+        setTomatoes((prevTomatoes) => {
+          return [...prevTomatoes, ...newTomatoes];
+        });
+
+        newTomatoesCount -= newTomatoes.length;
+      }
     }
   }, [isActive, currentTime, totalTime]);
 

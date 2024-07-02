@@ -1,8 +1,8 @@
-export const isTestMode = false; // Set this to false in production
+export const isTestMode = true; // Set this to false in production
 
 export const pomodoroIntervals = isTestMode
   ? [
-      { minutes: 0, seconds: 5, type: "work" },
+      { minutes: 0, seconds: 15, type: "work" },
       { minutes: 0, seconds: 5, type: "shortBreak" },
       { minutes: 0, seconds: 5, type: "work" },
       { minutes: 0, seconds: 5, type: "shortBreak" },

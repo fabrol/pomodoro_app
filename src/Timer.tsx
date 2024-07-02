@@ -24,6 +24,7 @@ function Timer() {
     seconds: 0,
   });
   const [isActive, setIsActive] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Advance the pomodoro and add an entry to the history
   const advancePomodoro = useCallback(() => {
@@ -43,11 +44,13 @@ function Timer() {
       pomoDurationMin: pomodoroIntervals[currentPomodoro].minutes,
       pomoDurationSec: pomodoroIntervals[currentPomodoro].seconds,
     });
+    setAnimationKey((prevKey) => prevKey + 1); // Update key to recreate animation
   }, [currentPomodoro, currentTime]);
 
   const resetPomodoro = useCallback(() => {
     setCurrentPomodoro(0);
     //historyManager.addEntry(currentPomodoro, false, currentTime);
+    setAnimationKey((prevKey) => prevKey + 1); // Update key to recreate animation
   }, [currentPomodoro, historyManager, currentTime]);
 
   const initialTime = useMemo(
@@ -103,6 +106,7 @@ function Timer() {
   const reset = () => {
     setCurrentTime(initialTime);
     setIsActive(false);
+    setAnimationKey((prevKey) => prevKey + 1); // Update key to recreate animation
   };
 
   const formatTime = () => {
@@ -186,6 +190,7 @@ function Timer() {
         </div>
       </div>
       <TomatoAnimation
+        key={animationKey} // Add key prop to force remount
         isActive={isActive}
         currentTime={currentTime.minutes * 60 + currentTime.seconds}
         totalTime={
