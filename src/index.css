@@ -11,7 +11,6 @@ body {
   color: #F5F5F5; /* Off-white text color for contrast */
   --color-primary: #F5F5F5;
   --color-secondary: #143f08;
-  overflow-y: hidden;
   overflow-x: hidden;
 }
 

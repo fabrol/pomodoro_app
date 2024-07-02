@@ -14,6 +14,7 @@ import { BiReset } from "react-icons/bi";
 import { MdRestartAlt, MdPlayArrow, MdPause } from "react-icons/md";
 import "./Timer.css";
 import TomatoAnimation from "./Tomatoes";
+import { AnimatePresence, motion } from "framer-motion";
 
 function Timer() {
   const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
@@ -121,6 +122,7 @@ function Timer() {
         flexDirection: "column",
         alignItems: "center",
         flex: 1,
+        overflowY: "hidden",
       }}
     >
       <div
@@ -189,15 +191,17 @@ function Timer() {
           </button>
         </div>
       </div>
-      <TomatoAnimation
-        key={animationKey} // Add key prop to force remount
-        isActive={isActive}
-        currentTime={currentTime.minutes * 60 + currentTime.seconds}
-        totalTime={
-          pomodoroIntervals[currentPomodoro].minutes * 60 +
-          pomodoroIntervals[currentPomodoro].seconds
-        }
-      />
+      {pomodoroIntervals[currentPomodoro].type === "work" && (
+        <TomatoAnimation
+          key={animationKey}
+          isActive={isActive}
+          currentTime={currentTime.minutes * 60 + currentTime.seconds}
+          totalTime={
+            pomodoroIntervals[currentPomodoro].minutes * 60 +
+            pomodoroIntervals[currentPomodoro].seconds
+          }
+        />
+      )}
     </div>
   );
 }

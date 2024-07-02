@@ -1,4 +1,5 @@
-import React, { createRef, useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import React, { createRef, useEffect, useRef, useState, memo } from "react";
 import "./Tomatoes.css";
 
 const TOMATO_HEIGHT = 13; // in px, but needs to be translated from VH?
@@ -7,16 +8,12 @@ const TomatoAnimation: React.FC<{
   isActive: boolean;
   currentTime: number;
   totalTime: number;
-}> = ({ isActive, currentTime, totalTime }) => {
+  key: number;
+}> = ({ isActive, currentTime, totalTime, key }) => {
+  console.log("TomatoAnimation component created");
   const [tomatoes, setTomatoes] = useState<
     { id: number; left: number; topPx: number; deltaY: number }[]
   >([]);
-  const [vertRow, setVertRow] = useState<{ rowNum: number; rowIdxs: number[] }>(
-    {
-      rowNum: -1,
-      rowIdxs: [],
-    }
-  );
   const rowTracker = useRef({
     rowNum: 0,
     rowIdxs: [] as number[],
@@ -110,17 +107,8 @@ const TomatoAnimation: React.FC<{
           const topPx = (top * dimensions.windowHeight) / 100;
           const deltaY = bottom - topPx;
 
-          /*
-            console.log(`Tomato ${index}:`);
-            console.log(`  newIdxs: ${newIdxs}`);
-            console.log(`  newIdxs[index]: ${newIdxs[index]}`);
-            console.log(`  left: ${left}`);
-            console.log(`  bottom: ${bottom}`);
-            console.log(`  row: ${rowTracker.current.rowNum}`);
-            */
-
           return {
-            id: Date.now() + index,
+            id: Date.now() + index + rowTracker.current.rowNum,
             left,
             topPx,
             deltaY,
@@ -143,17 +131,20 @@ const TomatoAnimation: React.FC<{
   return (
     <div className="tomato-container" ref={parentRef}>
       {tomatoes.map((tomato) => (
-        <div
-          key={tomato.id}
-          className="tomato"
-          style={
-            {
-              left: `${tomato.left}%`,
-              top: `${tomato.topPx}px`,
-              "--row": `${tomato.deltaY}px`,
-            } as React.CSSProperties
-          }
-        />
+        <AnimatePresence>
+          <motion.div
+            key={tomato.id}
+            exit={{ opacity: 0, y: 100 }}
+            className="tomato"
+            style={
+              {
+                left: `${tomato.left}%`,
+                top: `${tomato.topPx}px`,
+                "--row": `${tomato.deltaY}px`,
+              } as React.CSSProperties
+            }
+          />
+        </AnimatePresence>
       ))}
     </div>
   );
