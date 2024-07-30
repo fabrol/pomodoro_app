@@ -96,9 +96,11 @@ const TomatoAnimation: React.FC<{
         const newIdxs = rowTracker.current.rowIdxs.splice(0, rowTomatoes);
 
         const newTomatoes = Array.from({ length: rowTomatoes }, (_, index) => {
-          const left =
+          const left = Math.min(
             newIdxs[index] * (100 / TomatoesPerRow.current) +
-            (0.5 - Math.random()) * 5;
+              (0.5 - Math.random()) * 2,
+            98
+          );
           const top = Math.random() * 30;
           const bottom =
             dimensions.windowHeight -

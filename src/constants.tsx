@@ -1,4 +1,5 @@
-export const isTestMode = false; // Set this to false in production
+export const isTestMode = process.env.NEXT_PUBLIC_DEV_MODE === "true";
+console.log("isTestMode", isTestMode);
 
 export const pomodoroIntervals = isTestMode
   ? [
