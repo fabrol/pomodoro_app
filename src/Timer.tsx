@@ -130,8 +130,8 @@ function Timer() {
               return { minutes: minutes - 1, seconds: 59 };
             } else {
               clearInterval(intervalRef.current!);
-              advancePomodoro();
-              return pomodoroIntervals[currentPomodoro];
+              setIsActive(false);
+              return { minutes: 0, seconds: 0 };
             }
           });
         }
@@ -143,15 +143,7 @@ function Timer() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isActive, advancePomodoro, currentPomodoro]);
-
-  // New useEffect to handle when the timer reaches 0:0
-  useEffect(() => {
-    if (currentTime.minutes === 0 && currentTime.seconds === 0 && isActive) {
-      setIsActive(false);
-      advancePomodoro();
-    }
-  }, [currentTime, isActive, advancePomodoro]);
+  }, [isActive]);
 
   const toggle = () => {
     setIsActive(!isActive);
@@ -191,6 +183,9 @@ function Timer() {
       >
         <div style={{ fontSize: "2rem" }}>
           {pomoDisplayMapping[pomodoroIntervals[currentPomodoro].type]}
+          {currentTime.minutes === 0 &&
+            currentTime.seconds === 0 &&
+            " Complete"}
         </div>
         <div
           style={{
@@ -213,8 +208,21 @@ function Timer() {
             isActive={isActive}
           />
         </div>
-        <button onClick={toggle} className="action-button play-button">
-          {isActive ? <MdPause /> : <MdPlayArrow />}
+        <button
+          onClick={
+            currentTime.minutes === 0 && currentTime.seconds === 0
+              ? advancePomodoro
+              : toggle
+          }
+          className="action-button play-button"
+        >
+          {currentTime.minutes === 0 && currentTime.seconds === 0 ? (
+            <IoMdSkipForward style={{ fontSize: "2.5rem" }} />
+          ) : isActive ? (
+            <MdPause />
+          ) : (
+            <MdPlayArrow />
+          )}
         </button>
         <div
           style={{
