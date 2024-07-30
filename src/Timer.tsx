@@ -26,6 +26,8 @@ function Timer() {
   });
   const [isActive, setIsActive] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
+  const intervalRef = useRef<number | null>(null);
+  const lastTimeRef = useRef(Date.now());
 
   // Advance the pomodoro and add an entry to the history
   const advancePomodoro = useCallback(() => {
@@ -62,35 +64,68 @@ function Timer() {
     [currentPomodoro]
   );
 
-  const intervalRef = useRef<number | null>(null);
-
   useEffect(() => {
     setCurrentTime(initialTime);
   }, [initialTime]);
 
   useEffect(() => {
-    console.log("isActive", isActive);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        const now = Date.now();
+        const elapsedSeconds = Math.floor((now - lastTimeRef.current) / 1000);
+        console.log(`Tab became visible. Elapsed seconds: ${elapsedSeconds}`);
+        if (isActive && elapsedSeconds > 0) {
+          setCurrentTime((prevTime) => {
+            const totalSeconds =
+              prevTime.minutes * 60 + prevTime.seconds - elapsedSeconds;
+            if (totalSeconds <= 0) {
+              advancePomodoro();
+              return pomodoroIntervals[currentPomodoro];
+            }
+            return {
+              minutes: Math.floor(totalSeconds / 60),
+              seconds: totalSeconds % 60,
+            };
+          });
+        }
+      }
+      lastTimeRef.current = Date.now();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isActive, advancePomodoro, currentPomodoro]);
+
+  useEffect(() => {
     if (isActive) {
       intervalRef.current = window.setInterval(() => {
-        setCurrentTime((prevTime) => {
-          const { minutes, seconds } = prevTime;
-          if (seconds > 0) {
-            return { minutes, seconds: seconds - 1 };
-          } else if (minutes > 0) {
-            return { minutes: minutes - 1, seconds: 59 };
-          } else {
-            clearInterval(intervalRef.current as number);
-            console.log("Timer ended");
-            return { minutes: 0, seconds: 0 };
-          }
-        });
+        if (!document.hidden) {
+          console.log("Timer tick");
+          setCurrentTime((prevTime) => {
+            const { minutes, seconds } = prevTime;
+            if (seconds > 0) {
+              return { minutes, seconds: seconds - 1 };
+            } else if (minutes > 0) {
+              return { minutes: minutes - 1, seconds: 59 };
+            } else {
+              clearInterval(intervalRef.current!);
+              advancePomodoro();
+              return pomodoroIntervals[currentPomodoro];
+            }
+          });
+        }
       }, 1000);
-    } else {
-      clearInterval(intervalRef.current as number);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
 
-    return () => clearInterval(intervalRef.current as number); // Cleanup using ref
-  }, [isActive, setCurrentTime]);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isActive, advancePomodoro, currentPomodoro]);
 
   // New useEffect to handle when the timer reaches 0:0
   useEffect(() => {
