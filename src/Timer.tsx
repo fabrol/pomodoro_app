@@ -74,20 +74,39 @@ function Timer() {
         const now = Date.now();
         const elapsedSeconds = Math.floor((now - lastTimeRef.current) / 1000);
         console.log(`Tab became visible. Elapsed seconds: ${elapsedSeconds}`);
+        console.log(
+          `Current pomodoro: ${currentPomodoro}, Is active: ${isActive}`
+        );
+
         if (isActive && elapsedSeconds > 0) {
           setCurrentTime((prevTime) => {
             const totalSeconds =
               prevTime.minutes * 60 + prevTime.seconds - elapsedSeconds;
+            console.log(
+              `Previous time: ${prevTime.minutes}m ${prevTime.seconds}s`
+            );
+            console.log(`New total seconds: ${totalSeconds}`);
+
             if (totalSeconds <= 0) {
+              console.log(
+                "Timer expired during inactivity. Advancing pomodoro."
+              );
               advancePomodoro();
               return pomodoroIntervals[currentPomodoro];
             }
-            return {
+
+            const newTime = {
               minutes: Math.floor(totalSeconds / 60),
               seconds: totalSeconds % 60,
             };
+            console.log(`New time: ${newTime.minutes}m ${newTime.seconds}s`);
+            return newTime;
           });
+        } else {
+          console.log("Timer not active or no time elapsed.");
         }
+      } else {
+        console.log("Tab became hidden.");
       }
       lastTimeRef.current = Date.now();
     };
@@ -103,7 +122,6 @@ function Timer() {
     if (isActive) {
       intervalRef.current = window.setInterval(() => {
         if (!document.hidden) {
-          console.log("Timer tick");
           setCurrentTime((prevTime) => {
             const { minutes, seconds } = prevTime;
             if (seconds > 0) {
