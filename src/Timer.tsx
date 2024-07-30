@@ -13,8 +13,11 @@ import { IoMdPause, IoMdPlay, IoMdSkipForward } from "react-icons/io";
 import { BiReset } from "react-icons/bi";
 import { MdRestartAlt, MdPlayArrow, MdPause } from "react-icons/md";
 import "./Timer.css";
-import TomatoAnimation from "./Tomatoes";
+import SessionAnimation from "./Tomatoes";
 import { AnimatePresence, motion } from "framer-motion";
+
+// Add this type definition at the top of your file
+type SessionType = "work" | "shortBreak" | "longBreak";
 
 function Timer() {
   const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
@@ -252,17 +255,16 @@ function Timer() {
           </button>
         </div>
       </div>
-      {pomodoroIntervals[currentPomodoro].type === "work" && (
-        <TomatoAnimation
-          key={animationKey}
-          isActive={isActive}
-          currentTime={currentTime.minutes * 60 + currentTime.seconds}
-          totalTime={
-            pomodoroIntervals[currentPomodoro].minutes * 60 +
-            pomodoroIntervals[currentPomodoro].seconds
-          }
-        />
-      )}
+      <SessionAnimation
+        key={animationKey}
+        isActive={isActive}
+        currentTime={currentTime.minutes * 60 + currentTime.seconds}
+        totalTime={
+          pomodoroIntervals[currentPomodoro].minutes * 60 +
+          pomodoroIntervals[currentPomodoro].seconds
+        }
+        sessionType={pomodoroIntervals[currentPomodoro].type as SessionType}
+      />
     </div>
   );
 }

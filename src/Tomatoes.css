@@ -1,25 +1,33 @@
-.tomato-container {
+.session-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100vw;
-  pointer-events: none; /* Prevent interaction with the tomatoes */
-  flex:1;
+  pointer-events: none;
+  flex: 1;
   overflow: hidden;
 }
 
-.tomato {
+.session-item {
   position: absolute;
   width: 2vw;
   height: 2vw;
-  background-image: url('/tomato.svg');
   background-size: cover;
   animation: fadeToBucket 5s forwards;
   --row: 0;
 }
 
-.tomato.animate-out {
+.session-item.work {
+  background-image: url('/tomato.svg');
+}
+
+.session-item.shortBreak,
+.session-item.longBreak {
+  background-image: url('/break.svg');
+}
+
+.session-item.animate-out {
   animation: fadeOut 1s forwards;
 }
 
@@ -34,7 +42,7 @@
   }
 }
 
-.tomato-container.animate-out {
+.session-container.animate-out {
   animation: fadeOut 1s forwards;
 }
 
