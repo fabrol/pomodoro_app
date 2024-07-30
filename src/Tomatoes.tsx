@@ -2,7 +2,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { createRef, useEffect, useRef, useState, memo } from "react";
 import "./Tomatoes.css";
 
-const TOMATO_HEIGHT = 13; // in px, but needs to be translated from VH?
+const calculateTomatoHeight = (windowWidth: number) => {
+  return (windowWidth * 2) / 100; // 2% of window width (2vw)
+};
 
 const TomatoAnimation: React.FC<{
   isActive: boolean;
@@ -45,10 +47,18 @@ const TomatoAnimation: React.FC<{
     }
   }
 
+  const [tomatoHeight, setTomatoHeight] = useState(0);
+
   React.useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const handleResizeAndUpdateTomato = () => {
+      handleResize();
+      setTomatoHeight(calculateTomatoHeight(window.innerWidth));
+    };
+
+    handleResizeAndUpdateTomato();
+    window.addEventListener("resize", handleResizeAndUpdateTomato);
+    return () =>
+      window.removeEventListener("resize", handleResizeAndUpdateTomato);
   }, []);
 
   const totalTomatoes = useRef(0);
@@ -56,15 +66,15 @@ const TomatoAnimation: React.FC<{
   const TomatoesPerRow = useRef(0);
 
   useEffect(() => {
-    if (TotalRows.current === 0) {
-      TotalRows.current = Math.ceil(dimensions.height / TOMATO_HEIGHT);
-      TomatoesPerRow.current = Math.ceil(dimensions.width / TOMATO_HEIGHT);
+    if (TotalRows.current === 0 && tomatoHeight > 0) {
+      TotalRows.current = Math.ceil(dimensions.height / tomatoHeight);
+      TomatoesPerRow.current = Math.ceil(dimensions.width / tomatoHeight);
       totalTomatoes.current = TotalRows.current * TomatoesPerRow.current;
       console.log(`Total rows: ${TotalRows.current}`);
       console.log(`Tomatoes per row: ${TomatoesPerRow.current}`);
       console.log(`Total tomatoes: ${totalTomatoes.current}`);
     }
-  }, [dimensions]);
+  }, [dimensions, tomatoHeight]);
 
   useEffect(() => {
     if (isActive) {
@@ -80,7 +90,7 @@ const TomatoAnimation: React.FC<{
       let newTomatoesCount = activeTomatoes - tomatoes.length;
 
       while (newTomatoesCount > 0) {
-        // if the row is empty, create a new row and shuffle it
+        // If the row is empty, create a new row and shuffle it
         if (rowTracker.current.rowIdxs.length === 0) {
           let newRowIdxs = Array.from(
             { length: TomatoesPerRow.current },
@@ -90,45 +100,53 @@ const TomatoAnimation: React.FC<{
 
           rowTracker.current.rowIdxs = newRowIdxs;
           rowTracker.current.rowNum++;
+          console.log(
+            `New row created: ${
+              rowTracker.current.rowNum
+            }, Indices: ${newRowIdxs.join(",")}`
+          );
         }
 
-        let rowTomatoes = Math.min(newTomatoesCount, TomatoesPerRow.current);
-        const newIdxs = rowTracker.current.rowIdxs.splice(0, rowTomatoes);
+        let rowTomatoes = Math.min(
+          newTomatoesCount,
+          rowTracker.current.rowIdxs.length
+        );
+        console.log(
+          `Creating tomatoes: rowTomatoes=${rowTomatoes}, available indices=${rowTracker.current.rowIdxs.length}`
+        );
 
-        const newTomatoes = Array.from({ length: rowTomatoes }, (_, index) => {
-          const left = Math.min(
-            newIdxs[index] * (100 / TomatoesPerRow.current) +
-              (0.5 - Math.random()) * 2,
-            98
+        const newIdxs = rowTracker.current.rowIdxs.splice(0, rowTomatoes);
+        console.log(`Spliced indices: ${newIdxs.join(",")}`);
+
+        const newTomatoes = newIdxs.map((newIdx, index) => {
+          console.log(
+            `Creating tomato ${index}: newIdx=${newIdx}, rowIdxs left=${rowTracker.current.rowIdxs.length}`
           );
-          const top = Math.random() * 30;
-          const bottom =
-            dimensions.windowHeight -
-            rowTracker.current.rowNum * TOMATO_HEIGHT -
-            TOMATO_HEIGHT;
-          const topPx = (top * dimensions.windowHeight) / 100;
-          const deltaY = bottom - topPx;
+
+          const left = Math.min(newIdx * (100 / TomatoesPerRow.current), 97);
+
+          const initialTopPx = Math.random() * 30;
+          const finalTopPx =
+            dimensions.windowHeight - rowTracker.current.rowNum * tomatoHeight;
+          const deltaY = finalTopPx - initialTopPx;
 
           return {
             id: Date.now() + index + rowTracker.current.rowNum,
             left,
-            topPx,
+            topPx: initialTopPx,
             deltaY,
           };
         });
 
-        console.log(
-          `Current time: ${currentTime} Active: ${activeTomatoes} New: ${newTomatoesCount} Row: ${rowTracker.current.rowNum} Row Tomatoes: ${rowTomatoes}`
-        );
+        console.log(`New tomatoes created: ${newTomatoes.length}`);
 
-        setTomatoes((prevTomatoes) => {
-          return [...prevTomatoes, ...newTomatoes];
-        });
+        setTomatoes((prevTomatoes) => [...prevTomatoes, ...newTomatoes]);
 
         newTomatoesCount -= newTomatoes.length;
+        console.log(`Remaining tomatoes to create: ${newTomatoesCount}`);
       }
     }
-  }, [isActive, currentTime, totalTime]);
+  }, [isActive, currentTime, totalTime, dimensions, tomatoHeight]);
 
   return (
     <div className="tomato-container" ref={parentRef}>

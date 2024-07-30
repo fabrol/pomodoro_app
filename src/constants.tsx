@@ -3,7 +3,7 @@ console.log("isTestMode", isTestMode);
 
 export const pomodoroIntervals = isTestMode
   ? [
-      { minutes: 0, seconds: 15, type: "work" },
+      { minutes: 3, seconds: 15, type: "work" },
       { minutes: 0, seconds: 5, type: "shortBreak" },
       { minutes: 0, seconds: 5, type: "work" },
       { minutes: 0, seconds: 5, type: "shortBreak" },

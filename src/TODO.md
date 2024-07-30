@@ -6,3 +6,10 @@
 
    Get parent contains height
    base rows on height
+
+Bugs
+
+1. Reset pomodoro doesn't reset timer
+2. Navigating back to page recreates tomatoes falling down / tomato container
+3. Don't allow navigation when running timer
+4.
