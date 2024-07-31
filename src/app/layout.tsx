@@ -1,6 +1,7 @@
 "use client";
 
 import "../index.css";
+import { Analytics } from "@vercel/analytics/react";
 import NavBar from "../Navbar";
 import { SessionProvider, SessionContext } from "../SessionProvider";
 import "@mantine/core/styles.css";
@@ -58,6 +59,7 @@ export default function RootLayout({
         <title>Focus</title>
       </head>
       <body>
+        <Analytics />
         <MantineProvider theme={theme} defaultColorScheme="dark">
           <SessionProvider>
             <Layout>{children}</Layout>
