@@ -1,11 +1,18 @@
 "use client";
 
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from "react";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { PomodoroEntry } from "./PomodoroHistory";
 import { createClient } from "@supabase/supabase-js";
 import PomodoroHistory from "./PomodoroHistory";
 import { AuthenticationForm } from "./Login";
+import { pomodoroIntervals, Time } from "./constants";
 
 const supabaseUrl = "https://iyrfwbftinurdoauzggs.supabase.co";
 const supabaseAnonKey =
@@ -18,6 +25,14 @@ export const SessionContext = createContext<{
   history: PomodoroEntry[];
   setHistory: (history: PomodoroEntry[]) => void;
   historyManager: PomodoroHistory;
+  currentPomodoro: number;
+  setCurrentPomodoro: React.Dispatch<React.SetStateAction<number>>;
+  currentTime: Time;
+  setCurrentTime: React.Dispatch<React.SetStateAction<Time>>;
+  isActive: boolean;
+  setIsActive: React.Dispatch<React.SetStateAction<boolean>>;
+  animationKey: number;
+  setAnimationKey: React.Dispatch<React.SetStateAction<number>>;
 }>({
   session: null,
   history: [],
@@ -27,6 +42,14 @@ export const SessionContext = createContext<{
     history: [],
     setHistory: () => {},
   }), // Default initialization
+  currentPomodoro: 0,
+  setCurrentPomodoro: () => {},
+  currentTime: pomodoroIntervals[0],
+  setCurrentTime: () => {},
+  isActive: false,
+  setIsActive: () => {},
+  animationKey: 0,
+  setAnimationKey: () => {},
 });
 
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -34,7 +57,17 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [history, setHistory] = useState<PomodoroEntry[]>([]);
-  const historyManager = new PomodoroHistory({ supabase, history, setHistory });
+  const historyManager = useMemo(
+    () => new PomodoroHistory({ supabase, history, setHistory }),
+    [history]
+  );
+
+  const [currentPomodoro, setCurrentPomodoro] = useState(0);
+  const [currentTime, setCurrentTime] = useState<Time>(
+    pomodoroIntervals[currentPomodoro]
+  );
+  const [isActive, setIsActive] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
 
   useEffect(() => {
     const signInAnonymously = async () => {
@@ -82,10 +115,36 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({
     historyManager.fetchPomodoroHistory("From session useEffect");
   }, [session]);
 
+  // Add logging
+  useEffect(() => {
+    console.log("SessionProvider state updated:", {
+      currentPomodoro,
+      currentTime,
+      isActive,
+      animationKey,
+    });
+  }, [currentPomodoro, currentTime, isActive, animationKey]);
+
+  const contextValue = useMemo(
+    () => ({
+      session,
+      history,
+      setHistory,
+      historyManager,
+      currentPomodoro,
+      setCurrentPomodoro,
+      currentTime,
+      setCurrentTime,
+      isActive,
+      setIsActive,
+      animationKey,
+      setAnimationKey,
+    }),
+    [session, history, currentPomodoro, currentTime, isActive, animationKey]
+  );
+
   return (
-    <SessionContext.Provider
-      value={{ session, history, setHistory, historyManager }}
-    >
+    <SessionContext.Provider value={contextValue}>
       {session && children}
     </SessionContext.Provider>
   );

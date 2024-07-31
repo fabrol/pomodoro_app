@@ -13,22 +13,26 @@ import { IoMdPause, IoMdPlay, IoMdSkipForward } from "react-icons/io";
 import { BiReset } from "react-icons/bi";
 import { MdRestartAlt, MdPlayArrow, MdPause } from "react-icons/md";
 import "./Timer.css";
-import SessionAnimation from "./Tomatoes";
+import SessionAnimation from "./SessionAnimation";
 import { AnimatePresence, motion } from "framer-motion";
 
 // Add this type definition at the top of your file
 type SessionType = "work" | "shortBreak" | "longBreak";
 
 function Timer() {
-  const { session, history, historyManager } = useContext(SessionContext); // Use context to get session and historyManager
+  const {
+    session,
+    historyManager,
+    currentPomodoro,
+    setCurrentPomodoro,
+    currentTime,
+    setCurrentTime,
+    isActive,
+    setIsActive,
+    animationKey,
+    setAnimationKey,
+  } = useContext(SessionContext);
 
-  const [currentPomodoro, setCurrentPomodoro] = useState(0);
-  const [currentTime, setCurrentTime] = useState<Time>({
-    minutes: 0,
-    seconds: 0,
-  });
-  const [isActive, setIsActive] = useState(false);
-  const [animationKey, setAnimationKey] = useState(0);
   const intervalRef = useRef<number | null>(null);
   const lastTimeRef = useRef(Date.now());
 
@@ -37,6 +41,10 @@ function Timer() {
     const newPomodoroIndex = (currentPomodoro + 1) % pomodoroIntervals.length;
     setIsActive(false);
     setCurrentPomodoro(newPomodoroIndex);
+    setCurrentTime({
+      minutes: pomodoroIntervals[newPomodoroIndex].minutes,
+      seconds: pomodoroIntervals[newPomodoroIndex].seconds,
+    });
     if (!session?.user?.id) {
       console.log("No user ID found so can't add pomo");
       return;
@@ -51,25 +59,24 @@ function Timer() {
       pomoDurationSec: pomodoroIntervals[currentPomodoro].seconds,
     });
     setAnimationKey((prevKey) => prevKey + 1); // Update key to recreate animation
-  }, [currentPomodoro, currentTime]);
+  }, [
+    currentPomodoro,
+    currentTime,
+    session,
+    historyManager,
+    setCurrentPomodoro,
+    setIsActive,
+    setAnimationKey,
+  ]);
 
   const resetPomodoro = useCallback(() => {
     setCurrentPomodoro(0);
-    //historyManager.addEntry(currentPomodoro, false, currentTime);
+    setCurrentTime({
+      minutes: pomodoroIntervals[0].minutes,
+      seconds: pomodoroIntervals[0].seconds,
+    });
     setAnimationKey((prevKey) => prevKey + 1); // Update key to recreate animation
-  }, [currentPomodoro, historyManager, currentTime]);
-
-  const initialTime = useMemo(
-    () => ({
-      minutes: pomodoroIntervals[currentPomodoro].minutes,
-      seconds: pomodoroIntervals[currentPomodoro].seconds,
-    }),
-    [currentPomodoro]
-  );
-
-  useEffect(() => {
-    setCurrentTime(initialTime);
-  }, [initialTime]);
+  }, [setCurrentPomodoro, setCurrentTime, setAnimationKey]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -153,7 +160,10 @@ function Timer() {
   };
 
   const reset = () => {
-    setCurrentTime(initialTime);
+    setCurrentTime({
+      minutes: pomodoroIntervals[currentPomodoro].minutes,
+      seconds: pomodoroIntervals[currentPomodoro].seconds,
+    });
     setIsActive(false);
     setAnimationKey((prevKey) => prevKey + 1); // Update key to recreate animation
   };
