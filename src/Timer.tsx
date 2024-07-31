@@ -19,6 +19,45 @@ import { AnimatePresence, motion } from "framer-motion";
 // Add this type definition at the top of your file
 type SessionType = "work" | "shortBreak" | "longBreak";
 
+function requestNotificationPermission() {
+  if (!("Notification" in window)) {
+    console.log("This browser does not support desktop notification");
+  } else if (Notification.permission !== "granted") {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Notification permission granted");
+      }
+    });
+  }
+}
+
+function showNotification() {
+  console.log("Attempting to show notification");
+  console.log("Notification permission:", Notification.permission);
+
+  if (Notification.permission === "granted") {
+    try {
+      new Notification("Timer Ended", {
+        body: "Your focus session has ended.",
+        icon: "/tomato.svg",
+      });
+      console.log("Notification created successfully");
+    } catch (error) {
+      console.error("Error creating notification:", error);
+    }
+  } else if (Notification.permission !== "denied") {
+    console.log("Requesting notification permission");
+    Notification.requestPermission().then((permission) => {
+      console.log("Permission after request:", permission);
+      if (permission === "granted") {
+        showNotification();
+      }
+    });
+  } else {
+    console.log("Notifications are denied by the user");
+  }
+}
+
 function Timer() {
   const {
     session,
@@ -35,6 +74,11 @@ function Timer() {
 
   const intervalRef = useRef<number | null>(null);
   const lastTimeRef = useRef(Date.now());
+  const [showBell, setShowBell] = useState(false);
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
 
   // Advance the pomodoro and add an entry to the history
   const advancePomodoro = useCallback(() => {
@@ -128,6 +172,15 @@ function Timer() {
     };
   }, [isActive, advancePomodoro, currentPomodoro]);
 
+  const handleTimerEnd = useCallback(() => {
+    console.log("Timer ended, handling end of timer");
+    clearInterval(intervalRef.current!);
+    setIsActive(false);
+    showNotification();
+    setShowBell(true);
+    setTimeout(() => setShowBell(false), 1000);
+  }, [setIsActive]);
+
   useEffect(() => {
     if (isActive) {
       intervalRef.current = window.setInterval(() => {
@@ -139,8 +192,7 @@ function Timer() {
             } else if (minutes > 0) {
               return { minutes: minutes - 1, seconds: 59 };
             } else {
-              clearInterval(intervalRef.current!);
-              setIsActive(false);
+              handleTimerEnd();
               return { minutes: 0, seconds: 0 };
             }
           });
@@ -153,7 +205,7 @@ function Timer() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isActive]);
+  }, [isActive, handleTimerEnd]);
 
   const toggle = () => {
     setIsActive(!isActive);
@@ -184,7 +236,7 @@ function Timer() {
       }}
     >
       <div
-        className="timer"
+        className={`timer ${showBell ? "visual-bell" : ""}`}
         style={{
           display: "flex",
           flexDirection: "column",
