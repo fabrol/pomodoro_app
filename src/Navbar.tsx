@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PiFlowerLotusLight, PiFlowerLotusFill } from "react-icons/pi";
-import { PiUser, PiUserFill } from "react-icons/pi";
 import { PiChartPie, PiChartPieFill } from "react-icons/pi";
 import "./navbar.css";
 
@@ -23,7 +22,7 @@ const navItems = [
   },
 ];
 
-const NavBar: React.FC = () => {
+const NavBar: React.FC<{ isActive: boolean }> = ({ isActive }) => {
   const [hovered, setHovered] = useState<string>("");
   const pathname = usePathname();
 
@@ -31,7 +30,7 @@ const NavBar: React.FC = () => {
     pathname === path || hovered === path;
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isActive ? "fade-out" : "fade-in"}`}>
       <ul>
         {navItems.map(({ path, IconOutline, IconFilled }) => (
           <li

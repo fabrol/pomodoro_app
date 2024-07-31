@@ -10,6 +10,7 @@
   z-index: 1000; /* Ensures navbar stays on top of other content */
   width: 80vw;
   margin: 0 auto;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .navbar ul {
@@ -38,4 +39,14 @@
 
 .navbar a:hover {
   color: white;
+}
+
+.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fade-in {
+  opacity: 1;
+  pointer-events: auto;
 }

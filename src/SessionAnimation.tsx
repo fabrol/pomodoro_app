@@ -15,7 +15,13 @@ const SessionAnimation: React.FC<{
 }> = ({ isActive, currentTime, totalTime, key, sessionType }) => {
   console.log("SessionAnimation component created");
   const [items, setItems] = useState<
-    { id: number; left: number; topPx: number; deltaY: number }[]
+    Array<{
+      id: number;
+      left: number;
+      topPx: number;
+      deltaY: number;
+      shouldAnimate: boolean;
+    }>
   >([]);
   const rowTracker = useRef({
     rowNum: 0,
@@ -77,19 +83,31 @@ const SessionAnimation: React.FC<{
     }
   }, [dimensions, itemHeight]);
 
+  const [isInitialRender, setIsInitialRender] = useState(true);
+
   useEffect(() => {
-    if (isActive) {
-      const percentageTimeLeft = currentTime / totalTime;
-      const activeItems = Math.floor(
-        totalItems.current * (1 - percentageTimeLeft)
+    const percentageTimeLeft = currentTime / totalTime;
+    const activeItems = Math.floor(
+      totalItems.current * (1 - percentageTimeLeft)
+    );
+
+    if (!activeItems) {
+      return;
+    }
+
+    let newItemsCount = activeItems - items.length;
+
+    if (newItemsCount > 0) {
+      const newItems: Array<{
+        id: number;
+        left: number;
+        topPx: number;
+        deltaY: number;
+        shouldAnimate: boolean;
+      }> = [];
+      console.log(
+        `Starting item creation loop. Items to create: ${newItemsCount}`
       );
-
-      if (!activeItems) {
-        return;
-      }
-
-      let newItemsCount = activeItems - items.length;
-
       while (newItemsCount > 0) {
         if (rowTracker.current.rowIdxs.length === 0) {
           let newRowIdxs = Array.from(
@@ -112,59 +130,71 @@ const SessionAnimation: React.FC<{
           rowTracker.current.rowIdxs.length
         );
         console.log(
-          `Creating items: rowItems=${rowItems}, available indices=${rowTracker.current.rowIdxs.length}`
+          `Creating items for row ${rowTracker.current.rowNum}: rowItems=${rowItems}, available indices=${rowTracker.current.rowIdxs.length}`
         );
 
         const newIdxs = rowTracker.current.rowIdxs.splice(0, rowItems);
-        console.log(`Spliced indices: ${newIdxs.join(",")}`);
+        console.log(`Spliced indices for this iteration: ${newIdxs.join(",")}`);
 
-        const newItems = newIdxs.map((newIdx, index) => {
-          console.log(
-            `Creating item ${index}: newIdx=${newIdx}, rowIdxs left=${rowTracker.current.rowIdxs.length}`
-          );
-
+        newIdxs.forEach((newIdx, index) => {
           const left = Math.min(newIdx * (100 / ItemsPerRow.current), 97);
-
           const initialTopPx = Math.random() * 30;
           const finalTopPx =
             dimensions.windowHeight - rowTracker.current.rowNum * itemHeight;
           const deltaY = finalTopPx - initialTopPx;
 
-          return {
-            id: Date.now() + index + rowTracker.current.rowNum,
+          const newItem = {
+            id: Date.now() + index + rowTracker.current.rowNum + Math.random(),
             left,
-            topPx: initialTopPx,
+            topPx: isInitialRender && !isActive ? finalTopPx : initialTopPx,
             deltaY,
+            shouldAnimate: !isInitialRender || isActive,
           };
+
+          console.log(`Created item: ${JSON.stringify(newItem)}`);
+          newItems.push(newItem);
         });
 
-        console.log(`New items created: ${newItems.length}`);
-
-        setItems((prevItems) => [...prevItems, ...newItems]);
-
-        newItemsCount -= newItems.length;
+        newItemsCount -= newIdxs.length;
         console.log(`Remaining items to create: ${newItemsCount}`);
       }
+
+      console.log(`Total new items created: ${newItems.length}`);
+      setItems((prevItems) => {
+        const updatedItems = [...prevItems, ...newItems];
+        console.log(`Updated items count: ${updatedItems.length}`);
+        return updatedItems;
+      });
+
+      if (isInitialRender) {
+        setIsInitialRender(false);
+      }
     }
-  }, [isActive, currentTime, totalTime, dimensions, itemHeight]);
+  }, [
+    isActive,
+    currentTime,
+    totalTime,
+    dimensions,
+    itemHeight,
+    isInitialRender,
+  ]);
 
   return (
     <div className="session-container" ref={parentRef}>
       {items.map((item) => (
-        <AnimatePresence>
-          <motion.div
-            key={item.id}
-            exit={{ opacity: 0, y: 100 }}
-            className={`session-item ${sessionType}`}
-            style={
-              {
-                left: `${item.left}%`,
-                top: `${item.topPx}px`,
-                "--row": `${item.deltaY}px`,
-              } as React.CSSProperties
-            }
-          />
-        </AnimatePresence>
+        <div
+          key={item.id}
+          className={`session-item ${sessionType} ${
+            item.shouldAnimate ? "animate" : ""
+          }`}
+          style={
+            {
+              left: `${item.left}%`,
+              top: `${item.topPx}px`,
+              "--row": `${item.deltaY}px`,
+            } as React.CSSProperties
+          }
+        />
       ))}
     </div>
   );

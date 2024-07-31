@@ -14,8 +14,11 @@
   width: 2vw;
   height: 2vw;
   background-size: cover;
-  animation: fadeToBucket 5s forwards;
   --row: 0;
+}
+
+.session-item.animate {
+  animation: fadeToBucket 5s forwards;
 }
 
 .session-item.work {

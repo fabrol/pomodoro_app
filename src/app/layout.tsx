@@ -2,9 +2,10 @@
 
 import "../index.css";
 import NavBar from "../Navbar";
-import { SessionProvider } from "../SessionProvider";
+import { SessionProvider, SessionContext } from "../SessionProvider";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider, createTheme } from "@mantine/core";
+import { useContext } from "react";
 
 const theme = createTheme({
   fontSizes: {
@@ -32,6 +33,17 @@ const theme = createTheme({
   primaryColor: "myGreen",
 });
 
+function Layout({ children }: { children: React.ReactNode }) {
+  const { isActive } = useContext(SessionContext);
+
+  return (
+    <div className="root">
+      <NavBar isActive={isActive} />
+      {children}
+    </div>
+  );
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -47,10 +59,9 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider theme={theme} defaultColorScheme="dark">
-          <div className="root">
-            <NavBar />
-            <SessionProvider>{children}</SessionProvider>
-          </div>
+          <SessionProvider>
+            <Layout>{children}</Layout>
+          </SessionProvider>
         </MantineProvider>
       </body>
     </html>
